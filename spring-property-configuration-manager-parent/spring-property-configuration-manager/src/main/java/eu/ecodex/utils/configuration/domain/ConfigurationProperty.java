@@ -41,5 +41,18 @@ public class ConfigurationProperty {
                 .toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ConfigurationProperty)) return false;
 
+        ConfigurationProperty that = (ConfigurationProperty) o;
+
+        return propertyName != null ? propertyName.equals(that.propertyName) : that.propertyName == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return propertyName != null ? propertyName.hashCode() : 0;
+    }
 }

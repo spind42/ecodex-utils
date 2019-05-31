@@ -16,6 +16,9 @@ public interface ConfigurationPropertyManager {
      */
     List<ConfigurationProperty> getAll(String basePackage);
 
+
+    List<ConfigurationProperty> getAll(Class... basePackageClasses);
+
     /**
      *
      * @param configurationPropertySource - the property source which provides the properties to check

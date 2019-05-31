@@ -21,6 +21,7 @@ import org.springframework.validation.Validator;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -116,6 +117,18 @@ public class ConfigurationPropertyManagerImpl implements ConfigurationPropertyMa
                 .filter(new PackageFilter(basePackageFilter))
                 .map(this::processBean)
                 .flatMap(Function.identity())
+                .collect(Collectors.toList());
+
+        return collect;
+    }
+
+    @Override
+    public List<ConfigurationProperty> getAll(Class... basePackageClasses) {
+        List<ConfigurationProperty> collect = Stream.of(basePackageClasses)
+                .map(basePackageClass -> basePackageClass.getPackage().getName())
+                .map(this::getAll)
+                .flatMap(Collection::stream)
+                .distinct()
                 .collect(Collectors.toList());
 
         return collect;
