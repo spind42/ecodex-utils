@@ -5,7 +5,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import eu.ecodex.utils.configuration.example1.Example1Package;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyManager;
-import org.atmosphere.config.service.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -23,7 +22,7 @@ public class MainView {
 
     @PostConstruct
     public void init() {
-        configurationPropertyManager.getAll(Example1Package.class);
+        configurationPropertyManager.getAllProperties(Example1Package.class);
     }
 
 }

@@ -34,7 +34,7 @@ class ConfigurationPropertyManagerImplTest {
     @org.junit.jupiter.api.Test
     void getAll() {
 
-        List<ConfigurationProperty> all = configurationPropertyManager.getAll("eu.ecodex.utils.configuration");
+        List<ConfigurationProperty> all = configurationPropertyManager.getAllProperties("eu.ecodex.utils.configuration");
 
         LOGGER.info("all config properties are: [{}]", all);
 
@@ -47,7 +47,7 @@ class ConfigurationPropertyManagerImplTest {
     @org.junit.jupiter.api.Test
     void getAll_withSubpackageFiltering() {
 
-        List<ConfigurationProperty> all = configurationPropertyManager.getAll("eu.ecodex.utils.configuration.testdata");
+        List<ConfigurationProperty> all = configurationPropertyManager.getAllProperties("eu.ecodex.utils.configuration.testdata");
 
         LOGGER.info("all config properties are: [{}]", all);
 

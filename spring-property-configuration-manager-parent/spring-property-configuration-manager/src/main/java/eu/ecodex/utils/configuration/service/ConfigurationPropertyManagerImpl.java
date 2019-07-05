@@ -3,8 +3,8 @@ package eu.ecodex.utils.configuration.service;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationDescription;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 
+import eu.ecodex.utils.configuration.domain.ConfigurationPropertiesBeanInformation;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
-import eu.ecodex.utils.configuration.service.ConfigurationPropertyManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +98,54 @@ public class ConfigurationPropertyManagerImpl implements ConfigurationPropertyMa
                 });
     }
 
+
+    @Override
+    public List<ConfigurationPropertiesBeanInformation> getAllPropertiesBeans(Class... basePackage) {
+        return null;
+    }
+
+    @Override
+    public List<ConfigurationPropertiesBeanInformation> getAllPropertiesBeans(String... basePackages) {
+        Map<String, Object> configurationBeans = applicationContext.getBeansWithAnnotation(ConfigurationProperties.class);
+
+        List<ConfigurationPropertiesBeanInformation> collect = configurationBeans.entrySet()
+                .stream()
+                //filter out classes which aren't in package path basePackageFilter
+                .filter(new PackageFilter(basePackages))
+                .map(this::convertToConficurationPropertiesBean)
+
+                .collect(Collectors.toList());
+
+        return collect;
+    }
+
+    private ConfigurationPropertiesBeanInformation convertToConficurationPropertiesBean (Map.Entry<String, Object> entry) {
+        ConfigurationPropertiesBeanInformation c = new ConfigurationPropertiesBeanInformation();
+
+        c.setBeanName(entry.getKey());
+        Object value = entry.getValue();
+
+        ConfigurationProperties configurationPropertiesAnnotation = AnnotationUtils.getAnnotation(value.getClass(), ConfigurationProperties.class);
+        if (configurationPropertiesAnnotation == null) {
+            throw new IllegalArgumentException(String.format("The provided bean [%s] must have the annotation ConfigurationProperties!", entry.getValue()));
+        }
+        c.setConfigurationPropertiesAnnotation(configurationPropertiesAnnotation);
+
+        
+        ConfigurationLabel annotation = AnnotationUtils.getAnnotation(value.getClass(), ConfigurationLabel.class);
+        c.setConfigurationLabelAnnotation(annotation);
+
+        ConfigurationDescription description = AnnotationUtils.getAnnotation(value.getClass(), ConfigurationDescription.class);
+        c.setConfigurationDescriptionAnnotation(description);
+
+
+        
+
+        return c;
+    }
+
+
+
     /**
      * returns a list of all configuration properties
      * each ConfigurationProperty object holds the configuration property key, optional if set a description and label name
@@ -108,7 +156,7 @@ public class ConfigurationPropertyManagerImpl implements ConfigurationPropertyMa
      * @return a list of ConfigurationProperty objects
      */
     @Override
-    public List<ConfigurationProperty> getAll(String basePackageFilter) {
+    public List<ConfigurationProperty> getAllProperties(String basePackageFilter) {
         Map<String, Object> configurationBeans = applicationContext.getBeansWithAnnotation(ConfigurationProperties.class);
 
         List<ConfigurationProperty> collect = configurationBeans.entrySet()
@@ -122,11 +170,15 @@ public class ConfigurationPropertyManagerImpl implements ConfigurationPropertyMa
         return collect;
     }
 
+
+
+
+
     @Override
-    public List<ConfigurationProperty> getAll(Class... basePackageClasses) {
+    public List<ConfigurationProperty> getAllProperties(Class... basePackageClasses) {
         List<ConfigurationProperty> collect = Stream.of(basePackageClasses)
                 .map(basePackageClass -> basePackageClass.getPackage().getName())
-                .map(this::getAll)
+                .map(this::getAllProperties)
                 .flatMap(Collection::stream)
                 .distinct()
                 .collect(Collectors.toList());
@@ -184,15 +236,17 @@ public class ConfigurationPropertyManagerImpl implements ConfigurationPropertyMa
 
     private static class PackageFilter implements Predicate<Map.Entry<String, Object>> {
 
-        private final String basePackageFilter;
+        private final String[] basePackageFilter;
 
-        public PackageFilter(String basePackageFilter) {
+        public PackageFilter(String... basePackageFilter) {
             this.basePackageFilter = basePackageFilter;
         }
 
         @Override
         public boolean test(Map.Entry<String, Object> entry) {
-            return entry.getValue().getClass().getPackage().getName().startsWith(basePackageFilter);
+            String packageName = entry.getValue().getClass().getPackage().getName();
+            return Stream.of(basePackageFilter).filter(s -> s.startsWith(packageName))
+                    .findFirst().isPresent();
         }
     }
 

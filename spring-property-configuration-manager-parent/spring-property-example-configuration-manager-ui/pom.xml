@@ -5,7 +5,7 @@
     <parent>
         <artifactId>spring-property-configuration-manager-parent</artifactId>
         <groupId>eu.ecodex.connector.utils</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.0.2-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
