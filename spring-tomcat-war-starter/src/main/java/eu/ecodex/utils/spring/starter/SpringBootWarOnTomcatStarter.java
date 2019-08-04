@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-public abstract class SprintBootWarOnTomcatStarter extends SpringBootServletInitializer {
+public abstract class SpringBootWarOnTomcatStarter extends SpringBootServletInitializer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SprintBootWarOnTomcatStarter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpringBootWarOnTomcatStarter.class);
 
     public static final String CATALINA_HOME = "catalina.home";
     private String servletPath;
