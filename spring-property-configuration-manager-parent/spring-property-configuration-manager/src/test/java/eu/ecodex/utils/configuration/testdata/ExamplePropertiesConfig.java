@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix="example.configuration")
+@ConfigurationLabel("Example Configuration")
 @ConfigurationDescription("Properties for the example configuration")
 public class ExamplePropertiesConfig {
 

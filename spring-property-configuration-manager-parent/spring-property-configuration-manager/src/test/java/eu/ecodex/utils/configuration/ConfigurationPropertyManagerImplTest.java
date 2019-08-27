@@ -1,10 +1,12 @@
 package eu.ecodex.utils.configuration;
 
+import eu.ecodex.configuration.spring.EnablePropertyConfigurationManager;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyManagerImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
+@EnablePropertyConfigurationManager
 class ConfigurationPropertyManagerImplTest {
 
     private static final Logger LOGGER = LogManager.getLogger(ConfigurationPropertyManagerImplTest.class);
@@ -31,7 +34,20 @@ class ConfigurationPropertyManagerImplTest {
     @Autowired
     private ConfigurationPropertyManagerImpl configurationPropertyManager;
 
-    @org.junit.jupiter.api.Test
+    @Test
+    void test_getAll_byClassName() {
+        List<ConfigurationProperty> all = configurationPropertyManager.getAll(ConfigurationPackage.class);
+
+        LOGGER.info("all config properties are: [{}]", all);
+
+        Assertions.assertAll(
+                () -> Assertions.assertNotNull(all),
+                () -> assertThat(all).hasSize(4)
+        );
+    }
+
+
+    @Test
     void getAll() {
 
         List<ConfigurationProperty> all = configurationPropertyManager.getAllProperties("eu.ecodex.utils.configuration");
@@ -44,7 +60,7 @@ class ConfigurationPropertyManagerImplTest {
         );
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getAll_withSubpackageFiltering() {
 
         List<ConfigurationProperty> all = configurationPropertyManager.getAllProperties("eu.ecodex.utils.configuration.testdata");
@@ -57,6 +73,7 @@ class ConfigurationPropertyManagerImplTest {
         );
     }
 
+    @Disabled("moved to other class")
     @Test
     void isValidTest() {
 
@@ -67,10 +84,11 @@ class ConfigurationPropertyManagerImplTest {
 
         ConfigurationPropertySource configurationPropertySource = new MapConfigurationPropertySource(properties);
 
-        configurationPropertyManager.isConfigurationValid(configurationPropertySource, "eu.ecodex.utils.configuration");
+//        configurationPropertyManager.isConfigurationValid(configurationPropertySource, "eu.ecodex.utils.configuration");
 
     }
 
+    @Disabled("moved to other class")
     @Test
     void isValidTest_shouldThrow() {
 
@@ -83,7 +101,7 @@ class ConfigurationPropertyManagerImplTest {
 
         Assertions.assertThrows( org.springframework.boot.context.properties.bind.BindException.class, () -> {
             try {
-                configurationPropertyManager.isConfigurationValid(configurationPropertySource, ConfigurationPackage.class);
+//                configurationPropertyManager.isConfigurationValid(configurationPropertySource, ConfigurationPackage.class);
             } catch (org.springframework.boot.context.properties.bind.BindException be) {
                 LOGGER.info("Log bind Exception:", be);
 //                LOGGER.info("origin: [{}], Property: [{}], message: [{}] ", be.getProperty().getOrigin(), be.getMessage());
