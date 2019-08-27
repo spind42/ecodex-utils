@@ -9,23 +9,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.bind.BindResult;
-import org.springframework.boot.context.properties.bind.Bindable;
-import org.springframework.boot.context.properties.bind.Binder;
-import org.springframework.boot.context.properties.bind.validation.ValidationBindHandler;
-import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.validation.Validator;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,20 +39,20 @@ public class ConfigurationPropertyManagerImpl implements ConfigurationPropertyMa
      * @return a list of ConfigurationProperty objects
      */
     @Override
-    public List<ConfigurationProperty> getAll(String... basePackageFilter) {
-        return getAll(Arrays.asList(basePackageFilter));
+    public List<ConfigurationProperty> getConfigurationProperties(String... basePackageFilter) {
+        return getConfigurationProperties(Arrays.asList(basePackageFilter));
     }
 
     @Override
-    public List<ConfigurationProperty> getAll(Class... basePackageClasses) {
+    public List<ConfigurationProperty> getConfigurationProperties(Class... basePackageClasses) {
         List<String> collect = Stream.of(basePackageClasses)
                 .map(basePackageClass -> basePackageClass.getPackage().getName())
                 .collect(Collectors.toList());
 
-        return this.getAll(collect);
+        return this.getConfigurationProperties(collect);
     }
 
-    public List<ConfigurationProperty> getAll(List<String> basePackageFilter) {
+    public List<ConfigurationProperty> getConfigurationProperties(List<String> basePackageFilter) {
 //        Map<String, Object> configurationBeans = applicationContext.getBeansWithAnnotation(ConfigurationProperties.class);
         List<ConfigurationPropertiesBean> configurationBeans = this.getConfigurationBeans(basePackageFilter);
 

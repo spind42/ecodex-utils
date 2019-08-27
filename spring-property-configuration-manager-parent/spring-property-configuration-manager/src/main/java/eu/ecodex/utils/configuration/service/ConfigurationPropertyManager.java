@@ -15,10 +15,10 @@ public interface ConfigurationPropertyManager {
      * @param basePackage
      * @return the list of Properties
      */
-    List<ConfigurationProperty> getAll(String... basePackage);
+    List<ConfigurationProperty> getConfigurationProperties(String... basePackage);
 
 
-    List<ConfigurationProperty> getAll(Class... basePackageClasses);
+    List<ConfigurationProperty> getConfigurationProperties(Class... basePackageClasses);
 
 
     List<ConfigurationPropertiesBean> getConfigurationBeans(List<String> basePackageFilter);

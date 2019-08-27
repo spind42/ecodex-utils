@@ -36,7 +36,7 @@ class ConfigurationPropertyManagerImplTest {
 
     @Test
     void test_getAll_byClassName() {
-        List<ConfigurationProperty> all = configurationPropertyManager.getAll(ConfigurationPackage.class);
+        List<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties(ConfigurationPackage.class);
 
         LOGGER.info("all config properties are: [{}]", all);
 
@@ -50,7 +50,7 @@ class ConfigurationPropertyManagerImplTest {
     @Test
     void getAll() {
 
-        List<ConfigurationProperty> all = configurationPropertyManager.getAllProperties("eu.ecodex.utils.configuration");
+        List<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties("eu.ecodex.utils.configuration");
 
         LOGGER.info("all config properties are: [{}]", all);
 
@@ -63,7 +63,7 @@ class ConfigurationPropertyManagerImplTest {
     @Test
     void getAll_withSubpackageFiltering() {
 
-        List<ConfigurationProperty> all = configurationPropertyManager.getAllProperties("eu.ecodex.utils.configuration.testdata");
+        List<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties("eu.ecodex.utils.configuration.testdata");
 
         LOGGER.info("all config properties are: [{}]", all);
 
