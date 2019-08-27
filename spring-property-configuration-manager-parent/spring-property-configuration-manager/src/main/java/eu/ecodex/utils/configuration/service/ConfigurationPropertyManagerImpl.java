@@ -3,8 +3,8 @@ package eu.ecodex.utils.configuration.service;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationDescription;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 
+import eu.ecodex.utils.configuration.domain.ConfigurationPropertiesBean;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
-import eu.ecodex.utils.configuration.service.ConfigurationPropertyManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +16,11 @@ import org.springframework.boot.context.properties.bind.validation.ValidationBin
 import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.stereotype.Service;
 import org.springframework.validation.Validator;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +29,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Service
+
 public class ConfigurationPropertyManagerImpl implements ConfigurationPropertyManager {
 
     private static final Logger LOGGER = LogManager.getLogger(ConfigurationPropertyManager.class);
@@ -37,66 +37,6 @@ public class ConfigurationPropertyManagerImpl implements ConfigurationPropertyMa
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Autowired
-    private Validator validator;
-
-    //TODO: isPropertyValid function....
-
-    public void isConfigurationValid(ConfigurationPropertySource configurationPropertySource, Class basePackageFilter) {
-        String packageName = basePackageFilter.getPackage().getName();
-        isConfigurationValid(configurationPropertySource, packageName);
-    }
-
-
-
-    /**
-     * Tests if the configuration is valid, all properties are loaded from the
-     * provided configuration source
-     *
-     * @param configurationPropertySource - the propertySources
-     * @param basePackageFilter           - is only scanning with @ConfigurationProperties annotated classes under the specified package
-     */
-    public void isConfigurationValid(ConfigurationPropertySource configurationPropertySource, String basePackageFilter) {
-        Map<String, Object> configurationBeans = applicationContext.getBeansWithAnnotation(ConfigurationProperties.class);
-
-        configurationBeans.entrySet().stream()
-                .filter(new PackageFilter(basePackageFilter))
-                .forEach(entry -> {
-
-                    Class<?> configClass = entry.getValue().getClass();
-                    try {
-                        Object config = configClass.getDeclaredConstructor().newInstance();
-                        ConfigurationProperties annotation = AnnotationUtils.getAnnotation(configClass, ConfigurationProperties.class);
-                        String prefix = (String) AnnotationUtils.getValue(annotation);
-
-                        Bindable<?> bindable = Bindable.of(configClass).withAnnotations(annotation);
-                        Binder b = new Binder(configurationPropertySource);
-                        LOGGER.debug("Binding class [{}] with prefix [{}]", configClass, prefix);
-
-                        ValidationBindHandler validationBindHandler = new ValidationBindHandler(validator);
-
-                        BindResult<?> bind = b.bind(prefix, bindable, validationBindHandler);
-
-
-                        if (bind.isBound()) {
-                            LOGGER.trace("is bound!");
-                        }
-                        //TODO: validate bounded variables
-
-
-                    } catch (InstantiationException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-
-
-                });
-    }
 
     /**
      * returns a list of all configuration properties
@@ -108,13 +48,27 @@ public class ConfigurationPropertyManagerImpl implements ConfigurationPropertyMa
      * @return a list of ConfigurationProperty objects
      */
     @Override
-    public List<ConfigurationProperty> getAll(String basePackageFilter) {
-        Map<String, Object> configurationBeans = applicationContext.getBeansWithAnnotation(ConfigurationProperties.class);
+    public List<ConfigurationProperty> getAll(String... basePackageFilter) {
+        return getAll(Arrays.asList(basePackageFilter));
+    }
 
-        List<ConfigurationProperty> collect = configurationBeans.entrySet()
+    @Override
+    public List<ConfigurationProperty> getAll(Class... basePackageClasses) {
+        List<String> collect = Stream.of(basePackageClasses)
+                .map(basePackageClass -> basePackageClass.getPackage().getName())
+                .collect(Collectors.toList());
+
+        return this.getAll(collect);
+    }
+
+    public List<ConfigurationProperty> getAll(List<String> basePackageFilter) {
+//        Map<String, Object> configurationBeans = applicationContext.getBeansWithAnnotation(ConfigurationProperties.class);
+        List<ConfigurationPropertiesBean> configurationBeans = this.getConfigurationBeans(basePackageFilter);
+
+        List<ConfigurationProperty> collect = configurationBeans
                 .stream()
                 //filter out classes which aren't in package path basePackageFilter
-                .filter(new PackageFilter(basePackageFilter))
+//                .filter(new PackageFilter(basePackageFilter))
                 .map(this::processBean)
                 .flatMap(Function.identity())
                 .collect(Collectors.toList());
@@ -122,22 +76,10 @@ public class ConfigurationPropertyManagerImpl implements ConfigurationPropertyMa
         return collect;
     }
 
-    @Override
-    public List<ConfigurationProperty> getAll(Class... basePackageClasses) {
-        List<ConfigurationProperty> collect = Stream.of(basePackageClasses)
-                .map(basePackageClass -> basePackageClass.getPackage().getName())
-                .map(this::getAll)
-                .flatMap(Collection::stream)
-                .distinct()
-                .collect(Collectors.toList());
 
-        return collect;
-    }
-
-    private Stream<ConfigurationProperty> processBean(Map.Entry<String, Object> entry) {
-        LOGGER.trace("processing config bean with name: [{}]", entry.getKey());
-        Object bean = entry.getValue();
-
+    private Stream<ConfigurationProperty> processBean(ConfigurationPropertiesBean entry) {
+        LOGGER.trace("processing config bean with name: [{}]", entry.getBeanName());
+        Object bean = entry.getBean();
         Class<?> beanClass = bean.getClass();
 
 //        if (!beanClass.getPackage().getName().startsWith(basePackageFilter)) {
@@ -179,21 +121,51 @@ public class ConfigurationPropertyManagerImpl implements ConfigurationPropertyMa
             c.setLabel(label);
         }
 
+        c.setType(field.getType());
+
         return c;
     }
 
-    private static class PackageFilter implements Predicate<Map.Entry<String, Object>> {
+    @Override
+    public List<ConfigurationPropertiesBean> getConfigurationBeans(List<String> basePackageFilter) {
+        Map<String, Object> configurationBeans = applicationContext.getBeansWithAnnotation(ConfigurationProperties.class);
+        List<ConfigurationPropertiesBean> configurationBeansList = configurationBeans.entrySet().stream()
+                .filter(new PackageFilter(basePackageFilter))
+                .map(this::processConfigurationPropertiesBean)
+                .collect(Collectors.toList());
 
-        private final String basePackageFilter;
-
-        public PackageFilter(String basePackageFilter) {
-            this.basePackageFilter = basePackageFilter;
-        }
-
-        @Override
-        public boolean test(Map.Entry<String, Object> entry) {
-            return entry.getValue().getClass().getPackage().getName().startsWith(basePackageFilter);
-        }
+        return configurationBeansList;
     }
+
+    private ConfigurationPropertiesBean processConfigurationPropertiesBean(Map.Entry<String, Object> entry) {
+        ConfigurationPropertiesBean c = new ConfigurationPropertiesBean();
+
+        Object bean = entry.getValue();
+        Class<?> beanClass = bean.getClass();
+
+        c.setBeanName(entry.getKey());
+        c.setBeanClazz(beanClass);
+        c.setBean(bean);
+
+        ConfigurationProperties configurationProperties = beanClass.getAnnotation(ConfigurationProperties.class);
+        String pPrefix = configurationProperties.prefix();
+        c.setPropertyPrefix(pPrefix);
+
+        ConfigurationLabel configLabelAnnotation = beanClass.getAnnotation(ConfigurationLabel.class);
+        if (configLabelAnnotation != null) {
+            String label = (String) AnnotationUtils.getValue(configLabelAnnotation);
+            c.setLabel(label);
+        }
+
+        ConfigurationDescription descriptionAnnotation = beanClass.getAnnotation(ConfigurationDescription.class);
+        if (descriptionAnnotation != null) {
+            String description = (String) AnnotationUtils.getValue(descriptionAnnotation);
+            c.setDescription(description);
+        }
+
+
+        return c;
+    }
+
 
 }

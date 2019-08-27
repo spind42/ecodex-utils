@@ -10,6 +10,8 @@ public class ConfigurationProperty {
 
     private String label;
 
+    private Class type;
+
     public String getPropertyName() {
         return propertyName;
     }
@@ -32,6 +34,14 @@ public class ConfigurationProperty {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public Class getType() {
+        return type;
+    }
+
+    public void setType(Class type) {
+        this.type = type;
     }
 
     public String toString() {
