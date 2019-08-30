@@ -1,4 +1,4 @@
-package eu.ecodex.utils.configuration.testdata;
+package eu.ecodex.utils.configuration.testdata.subpackage1;
 
 
 

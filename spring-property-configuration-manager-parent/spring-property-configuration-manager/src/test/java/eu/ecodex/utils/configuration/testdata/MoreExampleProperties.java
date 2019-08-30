@@ -1,4 +1,4 @@
-package eu.ecodex.utils.configuration;
+package eu.ecodex.utils.configuration.testdata;
 
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 import org.springframework.boot.context.properties.ConfigurationProperties;

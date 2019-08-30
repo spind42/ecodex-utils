@@ -1,8 +1,8 @@
-package eu.ecodex.utils.configuration;
+package eu.ecodex.utils.configuration.service;
 
 import eu.ecodex.configuration.spring.EnablePropertyConfigurationManager;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
-import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollectorImpl;
+import eu.ecodex.utils.configuration.testdata.ConfigurationPackageTestdata;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -32,7 +32,7 @@ class ConfigurationPropertyCollectorImplTest {
 
     @Test
     void test_getAll_byClassName() {
-        List<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties(ConfigurationPackage.class);
+        List<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties(ConfigurationPackageTestdata.class);
 
         LOGGER.info("all config properties are: [{}]", all);
 
@@ -46,7 +46,7 @@ class ConfigurationPropertyCollectorImplTest {
     @Test
     void getAll() {
 
-        List<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties("eu.ecodex.utils.configuration");
+        List<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties("eu.ecodex.utils.configuration.testdata");
 
         LOGGER.info("all config properties are: [{}]", all);
 
@@ -59,7 +59,7 @@ class ConfigurationPropertyCollectorImplTest {
     @Test
     void getAll_withSubpackageFiltering() {
 
-        List<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties("eu.ecodex.utils.configuration.testdata");
+        List<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties("eu.ecodex.utils.configuration.testdata.subpackage1");
 
         LOGGER.info("all config properties are: [{}]", all);
 

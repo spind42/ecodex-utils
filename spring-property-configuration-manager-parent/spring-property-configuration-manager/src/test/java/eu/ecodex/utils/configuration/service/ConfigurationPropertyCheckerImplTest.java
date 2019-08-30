@@ -73,7 +73,7 @@ class ConfigurationPropertyCheckerImplTest {
     @Test
     void isValid() {
         ConfigurationPropertySource configurationPropertySource = new MapConfigurationPropertySource(getExampleProperties1());
-        configPropertyChecker.isConfigurationValid(configurationPropertySource, "eu.ecodex.utils.configuration");
+        configPropertyChecker.isConfigurationValid(configurationPropertySource, "eu.ecodex.utils.configuration.testdata");
 
     }
 
@@ -90,7 +90,7 @@ class ConfigurationPropertyCheckerImplTest {
 
         Assertions.assertThrows( org.springframework.boot.context.properties.bind.BindException.class, () -> {
             try {
-                configPropertyChecker.isConfigurationValid(configurationPropertySource, "eu.ecodex.utils.configuration");
+                configPropertyChecker.isConfigurationValid(configurationPropertySource, "eu.ecodex.utils.configuration.testdata");
             } catch (org.springframework.boot.context.properties.bind.BindException be) {
                 LOGGER.info("Log bind Exception:", be);
 //                LOGGER.info("origin: [{}], Property: [{}], message: [{}] ", be.getProperty().getOrigin(), be.getMessage());
