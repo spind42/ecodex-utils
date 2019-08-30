@@ -32,7 +32,7 @@ class ConfigurationPropertyCheckerImplTest {
 
 
 //    @Autowired
-//    private ConfigurationPropertyManagerImpl configurationPropertyManager;
+//    private ConfigurationPropertyCollectorImpl configurationPropertyManager;
 
     @Autowired
     private ConfigurationPropertyChecker configPropertyChecker;

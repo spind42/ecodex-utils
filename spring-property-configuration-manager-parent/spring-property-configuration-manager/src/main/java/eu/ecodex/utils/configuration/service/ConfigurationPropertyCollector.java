@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.source.ConfigurationPropertyS
 
 import java.util.List;
 
-public interface ConfigurationPropertyManager {
+public interface ConfigurationPropertyCollector {
 
     /**
      * Returns a list of all Properties (within with {@link org.springframework.boot.context.properties.ConfigurationProperties} annotated Classes)

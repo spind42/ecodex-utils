@@ -30,12 +30,12 @@ public class ConfigurationPropertyCheckerImpl implements ConfigurationPropertyCh
     private Validator validator;
 
     @Autowired
-    private ConfigurationPropertyManager configurationPropertyManager;
+    private ConfigurationPropertyCollector configurationPropertyCollector;
 
     public ConfigurationPropertyCheckerImpl() {}
 
-    public ConfigurationPropertyCheckerImpl(ConfigurationPropertyManager configurationPropertyManager, Validator validator) {
-        this.configurationPropertyManager = configurationPropertyManager;
+    public ConfigurationPropertyCheckerImpl(ConfigurationPropertyCollector configurationPropertyCollector, Validator validator) {
+        this.configurationPropertyCollector = configurationPropertyCollector;
         this.validator = validator;
     }
 
@@ -43,8 +43,8 @@ public class ConfigurationPropertyCheckerImpl implements ConfigurationPropertyCh
         this.validator = validator;
     }
 
-    public void setConfigurationPropertyManager(ConfigurationPropertyManager configurationPropertyManager) {
-        this.configurationPropertyManager = configurationPropertyManager;
+    public void setConfigurationPropertyCollector(ConfigurationPropertyCollector configurationPropertyCollector) {
+        this.configurationPropertyCollector = configurationPropertyCollector;
     }
 
     public String getStringValueForProperty(ConfigurationProperty configProperty) {
@@ -81,7 +81,7 @@ public class ConfigurationPropertyCheckerImpl implements ConfigurationPropertyCh
     public void isConfigurationValid(ConfigurationPropertySource configurationPropertySource, List<String> basePackageFilter) {
         LOGGER.debug("#isConfigurationValid for packages: [{}]", basePackageFilter);
 
-        List<ConfigurationPropertiesBean> configurationBeans = configurationPropertyManager.getConfigurationBeans(basePackageFilter);
+        List<ConfigurationPropertiesBean> configurationBeans = configurationPropertyCollector.getConfigurationBeans(basePackageFilter);
 
         configurationBeans.stream()
 

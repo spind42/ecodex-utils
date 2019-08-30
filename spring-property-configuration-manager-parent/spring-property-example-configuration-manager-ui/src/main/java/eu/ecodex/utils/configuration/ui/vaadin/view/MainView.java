@@ -6,7 +6,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
-import eu.ecodex.utils.configuration.service.ConfigurationPropertyManager;
+import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class MainView extends VerticalLayout {
     Grid<ConfigurationProperty> grid = new Grid<>(ConfigurationProperty.class);
 
     @Autowired
-    ConfigurationPropertyManager configurationPropertyManager;
+    ConfigurationPropertyCollector configurationPropertyCollector;
 
     public MainView() {
         this.add(this.grid);
@@ -33,7 +33,7 @@ public class MainView extends VerticalLayout {
 
     @PostConstruct
     public void init() {
-        List<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties("eu.ecodex.utils.configuration.example1");
+        List<ConfigurationProperty> all = configurationPropertyCollector.getConfigurationProperties("eu.ecodex.utils.configuration.example1");
 
         LOGGER.debug("all is {}", all);
 

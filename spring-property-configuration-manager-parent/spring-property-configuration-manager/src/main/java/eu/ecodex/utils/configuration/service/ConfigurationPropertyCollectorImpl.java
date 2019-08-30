@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-public class ConfigurationPropertyManagerImpl implements ConfigurationPropertyManager {
+public class ConfigurationPropertyCollectorImpl implements ConfigurationPropertyCollector {
 
-    private static final Logger LOGGER = LogManager.getLogger(ConfigurationPropertyManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(ConfigurationPropertyCollector.class);
 
     @Autowired
     private ApplicationContext applicationContext;
