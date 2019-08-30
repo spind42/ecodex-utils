@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.validation.Validator;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -28,6 +29,12 @@ public class ConfigurationPropertyManagerImpl implements ConfigurationPropertyMa
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private Validator validator;
+
+    public ConfigurationPropertyChecker getConfigChecker() {
+        return new ConfigurationPropertyCheckerImpl( this, validator);
+    }
 
     /**
      * returns a list of all configuration properties

@@ -11,6 +11,6 @@ public interface ConfigurationPropertyChecker {
      *                          annotated Properties are bound and checked within this binding
      * @throws org.springframework.boot.context.properties.bind.BindException in case of an failure during binding
      */
-    void isConfigurationValid(ConfigurationPropertySource configurationPropertySource, String basePackageFilter);
+    void isConfigurationValid(ConfigurationPropertySource configurationPropertySource, String... basePackageFilter);
 
 }

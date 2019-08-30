@@ -4,6 +4,7 @@ import eu.ecodex.utils.configuration.domain.ConfigurationPropertiesBean;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -18,15 +19,33 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ConfigurationPropertyCheckerImpl {
+public class ConfigurationPropertyCheckerImpl implements ConfigurationPropertyChecker {
+
 
     private static final Logger LOGGER = LogManager.getLogger(ConfigurationPropertyCheckerImpl.class);
 
-    private ConfigurationPropertySource configurationPropertySource;
+//    private ConfigurationPropertySource configurationPropertySource;
 
+    @Autowired
     private Validator validator;
 
+    @Autowired
     private ConfigurationPropertyManager configurationPropertyManager;
+
+    public ConfigurationPropertyCheckerImpl() {}
+
+    public ConfigurationPropertyCheckerImpl(ConfigurationPropertyManager configurationPropertyManager, Validator validator) {
+        this.configurationPropertyManager = configurationPropertyManager;
+        this.validator = validator;
+    }
+
+    public void setValidator(Validator validator) {
+        this.validator = validator;
+    }
+
+    public void setConfigurationPropertyManager(ConfigurationPropertyManager configurationPropertyManager) {
+        this.configurationPropertyManager = configurationPropertyManager;
+    }
 
     public String getStringValueForProperty(ConfigurationProperty configProperty) {
         return null;
@@ -47,6 +66,9 @@ public class ConfigurationPropertyCheckerImpl {
         isConfigurationValid(configurationPropertySource, packageName);
     }
 
+    public void isConfigurationValid(ConfigurationPropertySource configurationPropertySource, String... basePackageFilter) {
+        isConfigurationValid(configurationPropertySource, Arrays.asList(basePackageFilter));
+    }
 
 
     /**
@@ -57,7 +79,7 @@ public class ConfigurationPropertyCheckerImpl {
      * @param basePackageFilter           - is only scanning with @ConfigurationProperties annotated classes under the specified package
      */
     public void isConfigurationValid(ConfigurationPropertySource configurationPropertySource, List<String> basePackageFilter) {
-//        Map<String, Object> configurationBeans = applicationContext.getBeansWithAnnotation(ConfigurationProperties.class);
+        LOGGER.debug("#isConfigurationValid for packages: [{}]", basePackageFilter);
 
         List<ConfigurationPropertiesBean> configurationBeans = configurationPropertyManager.getConfigurationBeans(basePackageFilter);
 

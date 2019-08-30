@@ -73,41 +73,5 @@ class ConfigurationPropertyManagerImplTest {
         );
     }
 
-    @Disabled("moved to other class")
-    @Test
-    void isValidTest() {
-
-        Properties properties = new Properties();
-        properties.put("example.configuration.text", "text");
-        properties.put("example.configuration.number", "59");
-        properties.put("example.abc.address", "Testgasse 2");
-
-        ConfigurationPropertySource configurationPropertySource = new MapConfigurationPropertySource(properties);
-
-//        configurationPropertyManager.isConfigurationValid(configurationPropertySource, "eu.ecodex.utils.configuration");
-
-    }
-
-    @Disabled("moved to other class")
-    @Test
-    void isValidTest_shouldThrow() {
-
-        Properties properties = new Properties();
-        properties.put("example.configuration.text", "text");
-        properties.put("example.configuration.number", "89"); //number is too big MAX(60)
-        properties.put("example.abc.address", "Testgasse 2");
-
-        ConfigurationPropertySource configurationPropertySource = new MapConfigurationPropertySource(properties);
-
-        Assertions.assertThrows( org.springframework.boot.context.properties.bind.BindException.class, () -> {
-            try {
-//                configurationPropertyManager.isConfigurationValid(configurationPropertySource, ConfigurationPackage.class);
-            } catch (org.springframework.boot.context.properties.bind.BindException be) {
-                LOGGER.info("Log bind Exception:", be);
-//                LOGGER.info("origin: [{}], Property: [{}], message: [{}] ", be.getProperty().getOrigin(), be.getMessage());
-                throw be;
-            }
-        });
-    }
 
 }
