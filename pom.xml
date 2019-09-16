@@ -11,6 +11,7 @@
         <module>spring-tomcat-war-starter</module>
         <module>spring-property-configuration-manager-parent</module>
         <module>ecodex-dependencies</module>
+        <module>logging-tester</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -22,6 +22,10 @@ public class ExamplePropertiesConfig {
     @ConfigurationLabel("A text")
     private String text;
 
+
+    /**
+     * a number which should be max 60
+     */
     @NotNull
     @ConfigurationDescription("A number.........")
     @Max(60)

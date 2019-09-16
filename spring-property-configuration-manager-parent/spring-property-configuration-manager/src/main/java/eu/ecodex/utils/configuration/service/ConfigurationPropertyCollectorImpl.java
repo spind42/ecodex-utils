@@ -8,15 +8,20 @@ import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.SpringProperties;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.validation.Validator;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -126,6 +131,18 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
 
     @Override
     public List<ConfigurationPropertiesBean> getConfigurationBeans(List<String> basePackageFilter) {
+        ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+        scanner.addIncludeFilter(new AnnotationTypeFilter(ConfigurationProperties.class));
+
+        //all @ConfigurationProperties bean definitions
+        List<BeanDefinition> collect = basePackageFilter.stream().map(basePackage -> scanner.findCandidateComponents(basePackage))
+                .flatMap(beanDefinitions -> beanDefinitions.stream())
+                .collect(Collectors.toList());
+
+        //TODO: check if active! @Profile + @ConditionalOnProperty
+
+
+
         Map<String, Object> configurationBeans = applicationContext.getBeansWithAnnotation(ConfigurationProperties.class);
         List<ConfigurationPropertiesBean> configurationBeansList = configurationBeans.entrySet().stream()
                 .filter(new PackageFilter(basePackageFilter))
