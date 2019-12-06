@@ -12,6 +12,7 @@
         <module>spring-property-configuration-manager-parent</module>
         <module>ecodex-dependencies</module>
         <module>logging-tester</module>
+        <module>spring-quartz-tools</module>
     </modules>
     <packaging>pom</packaging>
 
