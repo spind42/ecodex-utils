@@ -11,11 +11,19 @@ public class ScheduledBean {
 
     private static final Logger LOGGER = LogManager.getLogger(ScheduledBean.class);
 
-    @Scheduled(cron = "* * * * * ?")
-    public void scheduledJob() {
-        long now = System.currentTimeMillis() / 1000;
-        LOGGER.info("schedule tasks using cron jobs - " + now);
+    public static final String SCHEDULED_CRON_JOB_STRING = "scheduledCronJob";
+    public static final String SCHEDULED_FIXED_RATE_JOB_STRING = "scheduledFixedRateJob";
 
+    @Scheduled(cron = "* * * * * ?")
+    public void scheduledCronJob() {
+        long now = System.currentTimeMillis() / 1000;
+        LOGGER.info("schedule tasks using cron jobs [{}] - {}", SCHEDULED_CRON_JOB_STRING, now);
+    }
+
+    @Scheduled(fixedDelay = 1000)
+    public void scheduledFixedRateJob() {
+        long now = System.currentTimeMillis() / 1000;
+        LOGGER.info("schedule tasks using cron jobs [{}] - {}", SCHEDULED_FIXED_RATE_JOB_STRING, now);
     }
 
 }

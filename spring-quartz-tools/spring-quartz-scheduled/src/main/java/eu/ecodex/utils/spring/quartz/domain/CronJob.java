@@ -3,6 +3,7 @@ package eu.ecodex.utils.spring.quartz.domain;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -11,6 +12,7 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.lang.reflect.Method;
 
+//@DisallowConcurrentExecution
 public class CronJob extends QuartzJobBean {
 
     public static final String MDC_ACTIVE_QUARTZ_JOB = "quartzJobName";

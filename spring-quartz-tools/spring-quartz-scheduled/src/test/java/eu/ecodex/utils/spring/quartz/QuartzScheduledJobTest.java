@@ -1,5 +1,7 @@
 package eu.ecodex.utils.spring.quartz;
 
+import eu.domibus.connector.test.logging.MemoryAppender;
+import eu.domibus.connector.test.logging.MemoryAppenderAssert;
 import eu.ecodex.utils.spring.quartz.configuration.ScheduledWithQuartzConfiguration;
 import eu.ecodex.utils.spring.quartz.domain.TriggerAndJobDefinition;
 import org.junit.jupiter.api.Assertions;
@@ -21,9 +23,10 @@ import java.time.Duration;
 import java.util.List;
 
 import static eu.ecodex.utils.spring.quartz.configuration.ScheduledWithQuartzConfiguration.TRIGGER_AND_JOB_DEFINITION_LIST_BEAN_NAME;
+import static eu.ecodex.utils.spring.quartz.testbeans.ScheduledBean.SCHEDULED_CRON_JOB_STRING;
+import static eu.ecodex.utils.spring.quartz.testbeans.ScheduledBean.SCHEDULED_FIXED_RATE_JOB_STRING;
 import static org.assertj.core.api.Assertions.assertThat;
 
-//@SpringBootTest(classes = QuartzScheduledJobTest.QuartzScheduledContext.class, properties = "debug=true")
 @SpringBootTest(properties = "debug=true")
 @ActiveProfiles("test")
 public class QuartzScheduledJobTest {
@@ -36,21 +39,6 @@ public class QuartzScheduledJobTest {
     }
 
 
-//    @BeforeAll
-//    public static void beforeAll() {
-//        SpringApplicationBuilder builder = new SpringApplicationBuilder();
-//        APP_CONTEXT = builder
-//                .sources(QuartzScheduledContext.class)
-//                .web(WebApplicationType.NONE)
-//                .properties("debug=true")
-//                .run();
-//    }
-
-//    @BeforeEach
-//    public void beforeEach() {
-//        APP_CONTEXT.getBeanFactory().autowireBean(this);
-//    }
-
     @Autowired(required = false)
     @Qualifier(TRIGGER_AND_JOB_DEFINITION_LIST_BEAN_NAME)
     private List<TriggerAndJobDefinition> triggerAndJobDefinitionList;
@@ -58,20 +46,18 @@ public class QuartzScheduledJobTest {
     @Test
     public void testRegisteredScheduled() {
 //        List triggerAndJobDefinitionList = (List) APP_CONTEXT.getBean(TRIGGER_AND_JOB_DEFINITION_LIST_BEAN_NAME);
-        assertThat(triggerAndJobDefinitionList).hasSize(1);
+        assertThat(triggerAndJobDefinitionList).hasSize(2);
     }
 
+    /**
+     * Ensure that the beans are scheduled
+     * @throws InterruptedException
+     */
     @Test
     public void testJobsRunning() throws InterruptedException {
-//        List triggerAndJobDefinitionList = (List) APP_CONTEXT.getBean(TRIGGER_AND_JOB_DEFINITION_LIST_BEAN_NAME);
-//        assertThat(triggerAndJobDefinitionList).hasSize(1);
-        Thread.sleep(Duration.ofSeconds(30).toMillis());
+        Thread.sleep(Duration.ofSeconds(2).toMillis());
+        MemoryAppenderAssert.assertThat(MemoryAppender.getAppender()).containsLogLine(SCHEDULED_CRON_JOB_STRING);
+        MemoryAppenderAssert.assertThat(MemoryAppender.getAppender()).containsLogLine(SCHEDULED_FIXED_RATE_JOB_STRING);
     }
-
-    @Test
-    public void testFixedDelay() {
-        Assertions.fail("not implemented yet!");
-    }
-
 
 }
