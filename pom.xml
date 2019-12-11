@@ -6,7 +6,7 @@
 
     <groupId>eu.ecodex.connector.utils</groupId>
     <artifactId>ecodex-utils-parent</artifactId>
-    <version>0.0.5-RELEASE</version>
+    <version>mvn clean install</version>
     <modules>
         <module>spring-tomcat-war-starter</module>
         <module>spring-property-configuration-manager-parent</module>

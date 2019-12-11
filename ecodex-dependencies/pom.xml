@@ -5,17 +5,18 @@
     <parent>
         <artifactId>ecodex-utils-parent</artifactId>
         <groupId>eu.ecodex.connector.utils</groupId>
-        <version>0.0.5-RELEASE</version>
+        <version>mvn clean install</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>eu.ecodex.connector.utils</groupId>
+<!--    <groupId>eu.ecodex.connector.utils</groupId>-->
     <artifactId>ecodex-dependencies</artifactId>
 
     <properties>
         <swagger.version>2.9.2</swagger.version>
         <spring.boot.version>2.1.4.RELEASE</spring.boot.version>
         <cxf.version>3.3.2</cxf.version>
+        <vaadin.version>14.0.12</vaadin.version>
     </properties>
 
     <dependencyManagement>
@@ -32,6 +33,14 @@
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>5.3.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-bom</artifactId>
+                <version>${vaadin.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
