@@ -10,13 +10,23 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>eu.ecodex.connector.utils</groupId>
-    <artifactId>spring-property-configuration-manager-parent</artifactId>
+    <artifactId>spring-quartz-tools</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>spring-property-configuration-manager-api</module>
-        <module>spring-property-configuration-manager</module>
-        <module>spring-property-example-configuration-manager-ui</module>
+        <module>spring-quartz-scheduled</module>
+        <module>spring-quartz-monitor</module>
     </modules>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>eu.ecodex.connector.utils</groupId>
+                <artifactId>ecodex-dependencies</artifactId>
+                <scope>import</scope>
+                <type>pom</type>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

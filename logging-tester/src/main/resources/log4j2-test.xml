@@ -21,6 +21,7 @@
     <Loggers>
         <Root level="info">
             <AppenderRef ref="Console" additivity="false" />
+            <AppenderRef ref="Memory" />
         </Root>
         <Logger name="eu.domibus.connector" level="trace" additivity="false">
             <AppenderRef ref="Console" />
