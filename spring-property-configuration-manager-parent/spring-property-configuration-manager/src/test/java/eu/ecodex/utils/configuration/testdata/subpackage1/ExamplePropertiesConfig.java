@@ -1,4 +1,4 @@
-package eu.ecodex.utils.configuration.testdata;
+package eu.ecodex.utils.configuration.testdata.subpackage1;
 
 
 
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix="example.configuration")
+@ConfigurationLabel("Example Configuration")
 @ConfigurationDescription("Properties for the example configuration")
 public class ExamplePropertiesConfig {
 
@@ -21,6 +22,10 @@ public class ExamplePropertiesConfig {
     @ConfigurationLabel("A text")
     private String text;
 
+
+    /**
+     * a number which should be max 60
+     */
     @NotNull
     @ConfigurationDescription("A number.........")
     @Max(60)
