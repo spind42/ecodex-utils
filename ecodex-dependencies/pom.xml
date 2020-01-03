@@ -160,6 +160,12 @@
                 <version>${spring.boot.version}</version>
             </dependency>
 
+            <!-- ecodex utils dependencies -->
+            <dependency>
+                <groupId>eu.ecodex.connector.utils</groupId>
+                <artifactId>spring-property-configuration-manager-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
 
 
