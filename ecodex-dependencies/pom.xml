@@ -166,6 +166,11 @@
                 <artifactId>spring-property-configuration-manager-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>eu.ecodex.connector.utils</groupId>
+                <artifactId>spring-property-converter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
 
 
