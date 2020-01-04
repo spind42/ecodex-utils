@@ -171,7 +171,11 @@
                 <artifactId>spring-property-converter</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
+            <dependency>
+                <artifactId>ecodex-utils-parent</artifactId>
+                <groupId>eu.ecodex.connector.utils</groupId>
+                <version>${project.version}</version>
+            </dependency>
 
 
 

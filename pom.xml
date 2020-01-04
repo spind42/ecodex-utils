@@ -13,6 +13,7 @@
         <module>ecodex-dependencies</module>
         <module>logging-tester</module>
         <module>spring-quartz-tools</module>
+        <module>spring-boot-property-converter</module>
     </modules>
     <packaging>pom</packaging>
 
