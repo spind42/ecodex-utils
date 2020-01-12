@@ -15,8 +15,8 @@
     <properties>
         <swagger.version>2.9.2</swagger.version>
         <spring.boot.version>2.1.4.RELEASE</spring.boot.version>
-        <cxf.version>3.3.2</cxf.version>
-        <vaadin.version>14.0.12</vaadin.version>
+        <cxf.version>3.3.4</cxf.version>
+        <vaadin.version>14.1.4</vaadin.version>
     </properties>
 
     <dependencyManagement>

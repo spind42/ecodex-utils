@@ -9,10 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>eu.ecodex.connector.utils</groupId>
-    <artifactId>spring-property-example-configuration-manager-ui</artifactId>
-
-
+    <artifactId>spring-property-configuration-manager-vaadin-ui</artifactId>
 
 
     <dependencyManagement>
@@ -60,6 +57,5 @@
             <artifactId>javaee-api</artifactId>
         </dependency>
     </dependencies>
-
 
 </project>

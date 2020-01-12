@@ -16,6 +16,7 @@
         <module>spring-property-configuration-manager-api</module>
         <module>spring-property-configuration-manager</module>
         <module>spring-property-example-configuration-manager-ui</module>
+        <module>spring-property-configuration-manager-vaadin-ui</module>
     </modules>
 
 

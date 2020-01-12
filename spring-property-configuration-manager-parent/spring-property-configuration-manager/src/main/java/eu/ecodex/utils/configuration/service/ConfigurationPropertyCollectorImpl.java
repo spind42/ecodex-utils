@@ -73,6 +73,7 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
                 //filter out classes which aren't in package path basePackageFilter
 //                .filter(new PackageFilter(basePackageFilter))
                 .map(this::processBean)
+                .map(List::stream)
                 .flatMap(Function.identity())
                 .collect(Collectors.toList());
 
@@ -80,15 +81,24 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
     }
 
 
-    private Stream<ConfigurationProperty> processBean(ConfigurationPropertiesBean entry) {
+    private List<ConfigurationProperty> processBean(ConfigurationPropertiesBean entry) {
         LOGGER.trace("processing config bean with name: [{}]", entry.getBeanName());
         Object bean = entry.getBean();
-        Class<?> beanClass = bean.getClass();
+        Class<?> beanClazz = bean.getClass();
 
 //        if (!beanClass.getPackage().getName().startsWith(basePackageFilter)) {
 //            LOGGER.debug("ignore bean [{}] because its not in the scanning package path [{}]", beanClass, basePackageFilter);
 //            return Stream.empty();
 //        }
+        return getConfigurationPropertyFromClazz(beanClazz);
+
+    }
+
+    @Override
+    public List<ConfigurationProperty> getConfigurationPropertyFromClazz(Class<?> beanClass) {
+        if (!beanClass.isAnnotationPresent(ConfigurationProperties.class)) {
+            throw new IllegalArgumentException("Class must be annotated with " + ConfigurationProperties.class);
+        }
         ConfigurationProperties configurationProperties = beanClass.getAnnotation(ConfigurationProperties.class);
         String pPrefix = configurationProperties.prefix();
         if (pPrefix.length() > 0) {
@@ -103,7 +113,7 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
                 .map(c -> {
                     c.setPropertyName(propertyPrefix + c.getPropertyName());
                     return c;
-                })
+                }).collect(Collectors.toList())
                 ;
     }
 

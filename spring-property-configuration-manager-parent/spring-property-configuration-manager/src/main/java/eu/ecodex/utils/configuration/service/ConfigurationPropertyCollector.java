@@ -21,5 +21,7 @@ public interface ConfigurationPropertyCollector {
     List<ConfigurationProperty> getConfigurationProperties(Class... basePackageClasses);
 
 
+    List<ConfigurationProperty> getConfigurationPropertyFromClazz(Class<?> beanClass);
+
     List<ConfigurationPropertiesBean> getConfigurationBeans(List<String> basePackageFilter);
 }
