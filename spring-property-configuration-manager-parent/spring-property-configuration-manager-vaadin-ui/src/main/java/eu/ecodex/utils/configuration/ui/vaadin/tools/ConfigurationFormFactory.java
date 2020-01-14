@@ -148,6 +148,9 @@ public class ConfigurationFormFactory {
                 .withConverter(new Converter() {
                     @Override
                     public Result convertToModel(Object value, ValueContext context) {
+                        if (value != null && "".equals(value.toString())){
+                            return Result.ok(null);
+                        }
                         if (conversionService.canConvert(value.getClass(), configurationProperty.getType())) {
                             return Result.ok(conversionService.convert(value, configurationProperty.getType()));
                         } else {
@@ -157,7 +160,12 @@ public class ConfigurationFormFactory {
 
                     @Override
                     public Object convertToPresentation(Object value, ValueContext context) {
-                        return conversionService.convert(value, String.class);
+                        String convert = conversionService.convert(value, String.class);
+//                        if ("".equals(convert)) {
+//                            return null;
+//                        }
+
+                        return convert;
                     }
                 })
                 .withNullRepresentation("")
@@ -212,13 +220,14 @@ public class ConfigurationFormFactory {
                 // finally, display all bean level validation errors in a single
                 // label
                 formStatusLabel.getElement().setProperty("innerHTML", errorMessage);
-                formStatusLabel.setVisible(!errorMessage.isEmpty());
+//                formStatusLabel.setVisible(!errorMessage.isEmpty());
 //                setVisible(formStatusLabel, !errorMessage.isEmpty());
 
                 // Let the default handler show messages for each field
                 defaultHandler.statusChange(status);
             });
             this.addComponentAsFirst(formStatusLabel);
+            formStatusLabel.setVisible(true);
         }
 
         @Override

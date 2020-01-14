@@ -12,7 +12,7 @@ import javax.validation.constraints.Min;
 
 @Component
 @ConfigurationProperties(prefix = "com.example1")
-@CompareStrings(propertyNames = {"password1", "password2"}, matchMode = StringComparisonMode.NOT_EQUAL_IGNORE_CASE, message = "Field values of password1 and password2 must NOT match!")
+@CompareStrings(propertyNames = {"password1", "password2"}, matchMode = StringComparisonMode.EQUAL, allowNull = true)
 public class Example1ConfigurationProperties {
 
     @ConfigurationLabel("Property1")
@@ -33,10 +33,10 @@ public class Example1ConfigurationProperties {
     @ConfigurationDescription("A 2nd property")
     String password2;
 
-    @ConfigurationLabel("intproperty")
+    @ConfigurationLabel("maxProperty")
     @ConfigurationDescription("A property")
     @Max(value = 200)
-    int intproperty;
+    int maxProperty;
 
 
     @ConfigurationLabel("minProperty")
@@ -61,12 +61,12 @@ public class Example1ConfigurationProperties {
         this.property1 = property1;
     }
 
-    public int getIntproperty() {
-        return intproperty;
+    public int getMaxProperty() {
+        return maxProperty;
     }
 
-    public void setIntproperty(int intproperty) {
-        this.intproperty = intproperty;
+    public void setMaxProperty(int maxProperty) {
+        this.maxProperty = maxProperty;
     }
 
     public int getMinProperty() {
