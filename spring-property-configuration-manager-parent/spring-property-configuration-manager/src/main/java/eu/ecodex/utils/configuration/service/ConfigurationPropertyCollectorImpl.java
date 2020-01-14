@@ -112,6 +112,7 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
                 .map(this::processFieldOfBean)
                 .map(c -> {
                     c.setPropertyName(propertyPrefix + c.getPropertyName());
+                    c.setParentClass(beanClass);
                     return c;
                 }).collect(Collectors.toList())
                 ;
@@ -121,6 +122,7 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
         LOGGER.trace("processing field [{}]", field);
         ConfigurationProperty c = new ConfigurationProperty();
         c.setPropertyName(field.getName());
+        c.setBeanPropertyName(field.getName());
 
         ConfigurationDescription descriptionAnnotation = AnnotationUtils.getAnnotation(field, ConfigurationDescription.class);
         if (descriptionAnnotation != null) {

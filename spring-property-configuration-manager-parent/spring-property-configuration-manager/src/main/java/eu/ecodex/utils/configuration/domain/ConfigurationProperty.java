@@ -6,11 +6,18 @@ public class ConfigurationProperty {
 
     private String propertyName;
 
+    private String beanPropertyName;
+
     private String description;
 
     private String label;
 
     private Class type;
+
+    /**
+     * The class this property is part of
+     */
+    private Class parentClass;
 
     public String getPropertyName() {
         return propertyName;
@@ -18,6 +25,14 @@ public class ConfigurationProperty {
 
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
+    }
+
+    public String getBeanPropertyName() {
+        return beanPropertyName;
+    }
+
+    public void setBeanPropertyName(String beanPropertyName) {
+        this.beanPropertyName = beanPropertyName;
     }
 
     public String getDescription() {
@@ -64,5 +79,13 @@ public class ConfigurationProperty {
     @Override
     public int hashCode() {
         return propertyName != null ? propertyName.hashCode() : 0;
+    }
+
+    public Class getParentClass() {
+        return parentClass;
+    }
+
+    public void setParentClass(Class parentClass) {
+        this.parentClass = parentClass;
     }
 }
