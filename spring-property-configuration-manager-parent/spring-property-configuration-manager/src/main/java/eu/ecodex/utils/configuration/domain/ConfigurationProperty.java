@@ -1,6 +1,7 @@
 package eu.ecodex.utils.configuration.domain;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.lang.Nullable;
 
 public class ConfigurationProperty {
 
@@ -17,6 +18,7 @@ public class ConfigurationProperty {
     /**
      * The class this property is part of
      */
+    @Nullable
     private Class parentClass;
 
     public String getPropertyName() {

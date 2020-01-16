@@ -3,8 +3,10 @@ package eu.ecodex.utils.configuration.service;
 
 import eu.ecodex.utils.configuration.domain.ConfigurationPropertiesBean;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
+import eu.ecodex.utils.configuration.domain.ConfigurationPropertyNode;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ConfigurationPropertyCollector {
@@ -15,13 +17,13 @@ public interface ConfigurationPropertyCollector {
      * @param basePackage
      * @return the list of Properties
      */
-    List<ConfigurationProperty> getConfigurationProperties(String... basePackage);
+    Collection<ConfigurationProperty> getConfigurationProperties(String... basePackage);
 
+    ConfigurationPropertyNode getConfigurationPropertiesHirachie(String... basePackage);
 
-    List<ConfigurationProperty> getConfigurationProperties(Class... basePackageClasses);
+    Collection<ConfigurationProperty> getConfigurationProperties(Class... basePackageClasses);
 
+    Collection<ConfigurationProperty> getConfigurationPropertyFromClazz(Class<?> beanClass);
 
-    List<ConfigurationProperty> getConfigurationPropertyFromClazz(Class<?> beanClass);
-
-    List<ConfigurationPropertiesBean> getConfigurationBeans(List<String> basePackageFilter);
+    Collection<ConfigurationPropertiesBean> getConfigurationBeans(List<String> basePackageFilter);
 }

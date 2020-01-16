@@ -16,6 +16,7 @@ import org.springframework.validation.Validator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,7 +82,7 @@ public class ConfigurationPropertyCheckerImpl implements ConfigurationPropertyCh
     public void isConfigurationValid(ConfigurationPropertySource configurationPropertySource, List<String> basePackageFilter) {
         LOGGER.debug("#isConfigurationValid for packages: [{}]", basePackageFilter);
 
-        List<ConfigurationPropertiesBean> configurationBeans = configurationPropertyCollector.getConfigurationBeans(basePackageFilter);
+        Collection<ConfigurationPropertiesBean> configurationBeans = configurationPropertyCollector.getConfigurationBeans(basePackageFilter);
 
         configurationBeans.stream()
 

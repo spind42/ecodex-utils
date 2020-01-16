@@ -19,9 +19,11 @@ import javax.annotation.PostConstruct;
 
 
 @HtmlImport("styles/shared-styles.html")
-@Route("configform")
+@Route(value = ConfigFormView.ROUTE_NAME, layout = MainView.class)
 @PageTitle("Spring Properties Configuration Manager")
 public class ConfigFormView extends VerticalLayout {
+
+    public static final String ROUTE_NAME = "configform";
 
     private static final Logger LOGGER = LogManager.getLogger(ConfigFormView.class);
 

@@ -3,8 +3,13 @@ package eu.ecodex.utils.configuration.ui.vaadin.tools;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.*;
 import com.vaadin.flow.data.converter.Converter;
@@ -19,6 +24,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
@@ -55,9 +61,7 @@ public class ConfigurationFormFactory {
         if (!clazz.isAnnotationPresent(ConfigurationProperties.class)) {
             throw new IllegalArgumentException("the passed class must be annotated with " + ConfigurationProperties.class);
         }
-        List<ConfigurationProperty> configurationPropertyFromClazz = configurationPropertyCollector.getConfigurationPropertyFromClazz(clazz);
-
-
+        Collection<ConfigurationProperty> configurationPropertyFromClazz = configurationPropertyCollector.getConfigurationPropertyFromClazz(clazz);
 
 //        BeanValidationBinder binder = new BeanValidationBinder(clazz);
         Binder<Properties> binder = new Binder<>(Properties.class);
@@ -87,11 +91,10 @@ public class ConfigurationFormFactory {
         ConfigurationPropertyForm formLayout = new ConfigurationPropertyForm(clazz, binder);
 
         configurationPropertyFromClazz.forEach(prop -> {
-            String label = prop.getLabel();
+//            String label = prop.getLabel();
             Component c = createComponentFromConfigurationProperty(binder, prop);
-
-
-            formLayout.addFormItem(c, label);
+            formLayout.add(c);
+//            formLayout.addFormItem(c);
         });
 
         formLayout.setValue(new Properties()); //setting empty properties...
@@ -105,81 +108,87 @@ public class ConfigurationFormFactory {
     }
 
     public Component createComponentFromConfigurationProperty(Binder<Properties> binder, ConfigurationProperty prop) {
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
         Optional<ConfigurationFieldFactory> ff = fieldCreatorFactories
                 .stream()
                 .filter(configurationFieldFactory -> configurationFieldFactory.canHandle(prop.getType()))
                 .findFirst();
+        AbstractField field;
         if (ff.isPresent()) {
             ConfigurationFieldFactory configurationFieldFactory = ff.get();
-            AbstractField field = configurationFieldFactory.createField(prop, binder);
+            field = configurationFieldFactory.createField(prop, binder);
 
-//            configurationFieldFactory.bind(prop, binder, field);
-            return field;
         } else {
             //Just create a simple text field...
-            AbstractField field = createField(prop, binder);
-            return field;
+            field = createField(prop, binder);
         }
+        field.setId(prop.getPropertyName());
+
+        Label label = new Label();
+
+        label.setFor(field);
+        label.setText(prop.getBeanPropertyName());
+        horizontalLayout.add(label);
+
+        horizontalLayout.add(field);
+
+        Button infoButton = new Button();
+        infoButton.setIcon(new Icon(VaadinIcon.INFO));
+        infoButton.addClickListener(clickEvent -> {
+            //TODO: show info box about property...
+        });
+        horizontalLayout.add(infoButton);
+
+        return horizontalLayout;
     }
 
 
-    private AbstractField createField(final ConfigurationProperty configurationProperty, final Binder<Properties> binder) {
+    public AbstractField createField(final ConfigurationProperty configurationProperty, final Binder<Properties> binder) {
 //        Class type = configurationProperty.getType();
         TextField tf = new TextField();
 
+
         Class parentClass = configurationProperty.getParentClass();
 
-        binder.forField(tf)
-                .withValidator(new Validator<String>() {
+        Binder.BindingBuilder<Properties, String> propertiesStringBindingBuilder = binder.forField(tf);
+        if (parentClass != null) {
+            //can currently only add a validator if the parent class is known and has Bean Validation
+            propertiesStringBindingBuilder = propertiesStringBindingBuilder.withValidator(new Validator<String>() {
 
-                    @Override
-                    public ValidationResult apply(String value, ValueContext context) {
-                        try {
-                            Object convertedValue = conversionService.convert(value, configurationProperty.getType());
+                @Override
+                public ValidationResult apply(String value, ValueContext context) {
 
-                            Set<ConstraintViolation<?>> constraintViolationSet = validator.validateValue(parentClass, configurationProperty.getBeanPropertyName(), convertedValue);
-                            if (constraintViolationSet.isEmpty()) {
-                                return ValidationResult.ok();
-                            }
-                            String errors = constraintViolationSet.stream().map(constraintViolation -> constraintViolation.getMessage()).collect(Collectors.joining("\n"));
-                            return ValidationResult.error(errors);
-                        } catch (IllegalArgumentException e) {
-                            //conversion errors are also Validation errors
-                            return ValidationResult.error(e.getMessage());
+
+                    Object convertedValue = value;
+                    try {
+                        if (value != null) {
+                            convertedValue = conversionService.convert(value, configurationProperty.getType());
                         }
+                    } catch (ConversionFailedException conversionFailed) {
+                        //TODO: improve error message...
+                        return ValidationResult.error(conversionFailed.getMessage());
                     }
-                })
-//                .withConverter(new Converter() {
-//                    @Override
-//                    public Result<String> convertToModel(Object value, ValueContext context) {
-//                        if (value != null && "".equals(value.toString())){
-//                            return Result.ok(null);
-//                        }
-//                        if (conversionService.canConvert(value.getClass(), configurationProperty.getType())) {
-//                            return Result.ok(conversionService.convert(value, String.class));
-//                        } else {
-//                            return Result.error("Cannot convert " + value.getClass() + " to " + configurationProperty.getType());
-//                        }
-//                    }
-//
-//                    @Override
-//                    public Object convertToPresentation(Object value, ValueContext context) {
-//                        String convert = conversionService.convert(value, String.class);
-////                        if ("".equals(convert)) {
-////                            return null;
-////                        }
-//                        return convert;
-//                    }
-//                })
-                .withNullRepresentation("")
-                .bind(
-                        (ValueProvider<Properties, String>) o -> o.getProperty(configurationProperty.getPropertyName(), null),
-                        (Setter<Properties, String>) (props, value) -> {
-                            if (value == null) {
-                                props.remove(configurationProperty.getPropertyName());
-                            }
-                            props.put(configurationProperty.getPropertyName(), value);
-                });
+
+                    Set<ConstraintViolation<?>> constraintViolationSet = validator.validateValue(parentClass, configurationProperty.getBeanPropertyName(), convertedValue);
+                    if (constraintViolationSet.isEmpty()) {
+                        return ValidationResult.ok();
+                    }
+                    String errors = constraintViolationSet.stream().map(constraintViolation -> constraintViolation.getMessage()).collect(Collectors.joining("\n"));
+                    return ValidationResult.error(errors);
+                }
+            });
+        }
+
+        propertiesStringBindingBuilder.withNullRepresentation("");
+
+        Binder.Binding<Properties, String> binding = propertiesStringBindingBuilder.bind(
+            (ValueProvider<Properties, String>) o -> o.getProperty(configurationProperty.getPropertyName(), null),
+            (Setter<Properties, String>) (props, value) -> {
+                if (value == null) {
+                    props.remove(configurationProperty.getPropertyName());
+                }
+                props.put(configurationProperty.getPropertyName(), value);
+            });
 
 
         return tf;

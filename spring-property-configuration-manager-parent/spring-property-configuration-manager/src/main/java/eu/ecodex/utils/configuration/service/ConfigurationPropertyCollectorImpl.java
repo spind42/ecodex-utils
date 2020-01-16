@@ -5,8 +5,10 @@ import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 
 import eu.ecodex.utils.configuration.domain.ConfigurationPropertiesBean;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
+import eu.ecodex.utils.configuration.domain.ConfigurationPropertyNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,13 +17,11 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.SpringProperties;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.Validator;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,12 +51,58 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
      * @return a list of ConfigurationProperty objects
      */
     @Override
-    public List<ConfigurationProperty> getConfigurationProperties(String... basePackageFilter) {
+    public Collection<ConfigurationProperty> getConfigurationProperties(String... basePackageFilter) {
         return getConfigurationProperties(Arrays.asList(basePackageFilter));
     }
 
     @Override
-    public List<ConfigurationProperty> getConfigurationProperties(Class... basePackageClasses) {
+    public ConfigurationPropertyNode getConfigurationPropertiesHirachie(String... basePackageFilter) {
+        return getConfigurationPropertiesHirachie(Arrays.asList(basePackageFilter));
+    }
+
+    private ConfigurationPropertyNode getConfigurationPropertiesHirachie(List<String> basePackageFilter) {
+        Map<String, ConfigurationProperty> configurationPropertiesMap = getConfigurationPropertiesMap(basePackageFilter);
+
+        ConfigurationPropertyNode rootNode = new ConfigurationPropertyNode();
+
+
+        configurationPropertiesMap.values()
+                .stream()
+
+//                .sorted(Comparator.comparingInt(p -> StringUtils.countOccurrencesOf(p.getPropertyName(), ".")))
+
+                .forEach( prop -> {
+                    String propName = prop.getPropertyName();
+                    ConfigurationPropertyNode currentNode = rootNode;
+
+                    String[] split = StringUtils.split(propName, ".");
+                    while (split != null) {
+                        String beforeDot = split[0];
+                        propName = split[1];
+                        Optional<ConfigurationPropertyNode> node = currentNode.getChild(beforeDot);
+                        if (node.isPresent()) {
+                            currentNode = node.get();
+                        } else {
+                            ConfigurationPropertyNode newNode = new ConfigurationPropertyNode();
+                            newNode.setNodeName(beforeDot);
+                            currentNode.addChild(newNode);
+                            currentNode = newNode;
+                        }
+                        split = StringUtils.split(propName, ".");
+                    }
+                    //set the property on the last node
+                    ConfigurationPropertyNode newNode = new ConfigurationPropertyNode();
+                    newNode.setNodeName(propName);
+                    newNode.setProperty(prop);
+                    currentNode.addChild(newNode);
+
+                });
+        return rootNode;
+
+    }
+
+    @Override
+    public Collection<ConfigurationProperty> getConfigurationProperties(Class... basePackageClasses) {
         List<String> collect = Stream.of(basePackageClasses)
                 .map(basePackageClass -> basePackageClass.getPackage().getName())
                 .collect(Collectors.toList());
@@ -64,18 +110,21 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
         return this.getConfigurationProperties(collect);
     }
 
-    public List<ConfigurationProperty> getConfigurationProperties(List<String> basePackageFilter) {
-//        Map<String, Object> configurationBeans = applicationContext.getBeansWithAnnotation(ConfigurationProperties.class);
+    private Collection<ConfigurationProperty> getConfigurationProperties(List<String> basePackageFilter) {
+        return getConfigurationPropertiesMap(basePackageFilter).values();
+    }
+
+    private Map<String, ConfigurationProperty> getConfigurationPropertiesMap(List<String> basePackageFilter) {
         List<ConfigurationPropertiesBean> configurationBeans = this.getConfigurationBeans(basePackageFilter);
 
-        List<ConfigurationProperty> collect = configurationBeans
+        Map<String, ConfigurationProperty> collect = configurationBeans
                 .stream()
                 //filter out classes which aren't in package path basePackageFilter
 //                .filter(new PackageFilter(basePackageFilter))
                 .map(this::processBean)
                 .map(List::stream)
                 .flatMap(Function.identity())
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(c -> c.getPropertyName(), c -> c));
 
         return collect;
     }

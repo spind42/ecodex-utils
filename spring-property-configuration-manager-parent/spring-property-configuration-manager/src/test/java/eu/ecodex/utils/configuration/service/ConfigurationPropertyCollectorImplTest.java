@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,7 +33,7 @@ class ConfigurationPropertyCollectorImplTest {
 
     @Test
     void test_getAll_byClassName() {
-        List<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties(ConfigurationPackageTestdata.class);
+        Collection<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties(ConfigurationPackageTestdata.class);
 
         LOGGER.info("all config properties are: [{}]", all);
 
@@ -46,7 +47,7 @@ class ConfigurationPropertyCollectorImplTest {
     @Test
     void getAll() {
 
-        List<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties("eu.ecodex.utils.configuration.testdata");
+        Collection<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties("eu.ecodex.utils.configuration.testdata");
 
         LOGGER.info("all config properties are: [{}]", all);
 
@@ -59,7 +60,7 @@ class ConfigurationPropertyCollectorImplTest {
     @Test
     void getAll_withSubpackageFiltering() {
 
-        List<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties("eu.ecodex.utils.configuration.testdata.subpackage1");
+        Collection<ConfigurationProperty> all = configurationPropertyManager.getConfigurationProperties("eu.ecodex.utils.configuration.testdata.subpackage1");
 
         LOGGER.info("all config properties are: [{}]", all);
 
