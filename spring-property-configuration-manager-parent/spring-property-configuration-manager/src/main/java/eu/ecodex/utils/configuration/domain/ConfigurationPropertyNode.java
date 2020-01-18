@@ -1,8 +1,10 @@
 package eu.ecodex.utils.configuration.domain;
 
 import org.springframework.lang.Nullable;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ConfigurationPropertyNode {
 
@@ -61,6 +63,26 @@ public class ConfigurationPropertyNode {
 
     public String getNodeName() {
         return nodeName;
+    }
+
+    public String getFullNodePath() {
+        String nodePath = "";
+        Stack<String> familyTree = new Stack<>();
+        ConfigurationPropertyNode node = this;
+        do {
+            familyTree.push(node.getNodeName());
+            node = node.getParent();
+        } while (node != null && !StringUtils.isEmpty(node.getNodeName()) );
+        //pop empty root node
+//        familyTree.pop();
+        if (!familyTree.empty()) {
+            nodePath = familyTree.pop();
+        }
+        while (!familyTree.empty()) {
+            String nodeName = familyTree.pop();
+            nodePath = nodePath + "." + nodeName;
+        }
+        return nodePath;
     }
 
     public void setNodeName(String nodeName) {

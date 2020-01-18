@@ -17,6 +17,7 @@ import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
+import eu.ecodex.utils.configuration.ui.vaadin.tools.configfield.DefaultTextFieldFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl;
@@ -54,6 +55,7 @@ public class ConfigurationFormFactory {
     javax.validation.Validator validator;
 
     @Autowired
+    @UiConfigurationConversationService
     ConversionService conversionService;
 
 
@@ -92,7 +94,7 @@ public class ConfigurationFormFactory {
 
         configurationPropertyFromClazz.forEach(prop -> {
 //            String label = prop.getLabel();
-            Component c = createComponentFromConfigurationProperty(binder, prop);
+            Component c = createComponentFromConfigurationProperty(prop, binder);
             formLayout.add(c);
 //            formLayout.addFormItem(c);
         });
@@ -107,21 +109,11 @@ public class ConfigurationFormFactory {
         return formLayout;
     }
 
-    public Component createComponentFromConfigurationProperty(Binder<Properties> binder, ConfigurationProperty prop) {
+    public Component createComponentFromConfigurationProperty(ConfigurationProperty prop, Binder<Properties> binder) {
         HorizontalLayout horizontalLayout = new HorizontalLayout();
-        Optional<ConfigurationFieldFactory> ff = fieldCreatorFactories
-                .stream()
-                .filter(configurationFieldFactory -> configurationFieldFactory.canHandle(prop.getType()))
-                .findFirst();
-        AbstractField field;
-        if (ff.isPresent()) {
-            ConfigurationFieldFactory configurationFieldFactory = ff.get();
-            field = configurationFieldFactory.createField(prop, binder);
 
-        } else {
-            //Just create a simple text field...
-            field = createField(prop, binder);
-        }
+        AbstractField field = createField(prop, binder);
+
         field.setId(prop.getPropertyName());
 
         Label label = new Label();
@@ -142,57 +134,73 @@ public class ConfigurationFormFactory {
         return horizontalLayout;
     }
 
-
-    public AbstractField createField(final ConfigurationProperty configurationProperty, final Binder<Properties> binder) {
-//        Class type = configurationProperty.getType();
-        TextField tf = new TextField();
-
-
-        Class parentClass = configurationProperty.getParentClass();
-
-        Binder.BindingBuilder<Properties, String> propertiesStringBindingBuilder = binder.forField(tf);
-        if (parentClass != null) {
-            //can currently only add a validator if the parent class is known and has Bean Validation
-            propertiesStringBindingBuilder = propertiesStringBindingBuilder.withValidator(new Validator<String>() {
-
-                @Override
-                public ValidationResult apply(String value, ValueContext context) {
-
-
-                    Object convertedValue = value;
-                    try {
-                        if (value != null) {
-                            convertedValue = conversionService.convert(value, configurationProperty.getType());
-                        }
-                    } catch (ConversionFailedException conversionFailed) {
-                        //TODO: improve error message...
-                        return ValidationResult.error(conversionFailed.getMessage());
-                    }
-
-                    Set<ConstraintViolation<?>> constraintViolationSet = validator.validateValue(parentClass, configurationProperty.getBeanPropertyName(), convertedValue);
-                    if (constraintViolationSet.isEmpty()) {
-                        return ValidationResult.ok();
-                    }
-                    String errors = constraintViolationSet.stream().map(constraintViolation -> constraintViolation.getMessage()).collect(Collectors.joining("\n"));
-                    return ValidationResult.error(errors);
-                }
-            });
+    public AbstractField createField(final ConfigurationProperty prop, final Binder<Properties> binder) {
+        Optional<ConfigurationFieldFactory> ff = fieldCreatorFactories
+                .stream()
+                .filter(configurationFieldFactory -> configurationFieldFactory.canHandle(prop.getType()))
+                .findFirst();
+        AbstractField field;
+        if (ff.isPresent()) {
+            ConfigurationFieldFactory configurationFieldFactory = ff.get();
+            field = configurationFieldFactory.createField(prop, binder);
+            return field;
+        } else {
+            throw new RuntimeException("No Field Factory found for property " + prop);
+            //Just create a simple text field...
+//            field = createField(prop, binder);
         }
 
-        propertiesStringBindingBuilder.withNullRepresentation("");
-
-        Binder.Binding<Properties, String> binding = propertiesStringBindingBuilder.bind(
-            (ValueProvider<Properties, String>) o -> o.getProperty(configurationProperty.getPropertyName(), null),
-            (Setter<Properties, String>) (props, value) -> {
-                if (value == null) {
-                    props.remove(configurationProperty.getPropertyName());
-                }
-                props.put(configurationProperty.getPropertyName(), value);
-            });
-
-
-        return tf;
     }
+
+//    public AbstractField createField(final ConfigurationProperty configurationProperty, final Binder<Properties> binder) {
+//        TextField tf = new TextField();
+//
+//
+//        Class parentClass = configurationProperty.getParentClass();
+//
+//        Binder.BindingBuilder<Properties, String> propertiesStringBindingBuilder = binder.forField(tf);
+//        if (parentClass != null) {
+//            //can currently only add a validator if the parent class is known and has Bean Validation
+//            propertiesStringBindingBuilder = propertiesStringBindingBuilder.withValidator(new Validator<String>() {
+//
+//                @Override
+//                public ValidationResult apply(String value, ValueContext context) {
+//
+//
+//                    Object convertedValue = value;
+//                    try {
+//                        if (value != null) {
+//                            convertedValue = conversionService.convert(value, configurationProperty.getType());
+//                        }
+//                    } catch (ConversionFailedException conversionFailed) {
+//                        //TODO: improve error message...
+//                        return ValidationResult.error(conversionFailed.getMessage());
+//                    }
+//
+//                    Set<ConstraintViolation<?>> constraintViolationSet = validator.validateValue(parentClass, configurationProperty.getBeanPropertyName(), convertedValue);
+//                    if (constraintViolationSet.isEmpty()) {
+//                        return ValidationResult.ok();
+//                    }
+//                    String errors = constraintViolationSet.stream().map(constraintViolation -> constraintViolation.getMessage()).collect(Collectors.joining("\n"));
+//                    return ValidationResult.error(errors);
+//                }
+//            });
+//        }
+//
+//        propertiesStringBindingBuilder.withNullRepresentation("");
+//
+//        Binder.Binding<Properties, String> binding = propertiesStringBindingBuilder.bind(
+//            (ValueProvider<Properties, String>) o -> o.getProperty(configurationProperty.getPropertyName(), null),
+//            (Setter<Properties, String>) (props, value) -> {
+//                if (value == null) {
+//                    props.remove(configurationProperty.getPropertyName());
+//                }
+//                props.put(configurationProperty.getPropertyName(), value);
+//            });
+//
+//
+//        return tf;
+//    }
 
 
     public class ConfigurationPropertyForm extends FormLayout implements HasValue<HasValue.ValueChangeEvent<Properties>, Properties> {

@@ -5,10 +5,13 @@ import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 import eu.ecodex.utils.configuration.example1.validators.CompareStrings;
 import eu.ecodex.utils.configuration.example1.validators.StringComparisonMode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.nio.file.Path;
 
 @Component
 @ConfigurationProperties(prefix = "com.example1")
@@ -44,6 +47,29 @@ public class Example1ConfigurationProperties {
     @Min(value = 200)
     int minProperty;
 
+    @ConfigurationLabel("A Path")
+    @ConfigurationDescription("Path to anything")
+    @NotNull
+    Path thePath;
+
+    @NestedConfigurationProperty
+    NestedProperty subsetting = new NestedProperty();
+
+    public NestedProperty getSubsetting() {
+        return subsetting;
+    }
+
+    public void setSubsetting(NestedProperty subsetting) {
+        this.subsetting = subsetting;
+    }
+
+    public Path getThePath() {
+        return thePath;
+    }
+
+    public void setThePath(Path thePath) {
+        this.thePath = thePath;
+    }
 
     public String getProperty1() {
         return property1;

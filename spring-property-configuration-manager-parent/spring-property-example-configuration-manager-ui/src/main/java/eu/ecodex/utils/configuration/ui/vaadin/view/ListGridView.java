@@ -30,7 +30,7 @@ public class ListGridView extends VerticalLayout {
 
     private static final Logger LOGGER = LogManager.getLogger(ListGridView.class);
 
-    Grid<ConfigurationProperty> grid = new Grid<>(ConfigurationProperty.class);
+    Grid<ConfigurationProperty> grid = new Grid<>(ConfigurationProperty.class, false);
 
     @Autowired
     ConfigurationPropertyCollector configurationPropertyCollector;
@@ -43,8 +43,7 @@ public class ListGridView extends VerticalLayout {
     Binder<Properties> binder = new Binder();
 
     public ListGridView() {
-        this.grid.setSizeFull();
-        this.add(this.grid);
+
 
     }
 
@@ -56,9 +55,9 @@ public class ListGridView extends VerticalLayout {
 
         binder.setBean(properties);
 
-        grid.setItems(all);
 
-        grid.setColumns();
+
+
         grid.addColumn("propertyName").setHeader("Property Path");
         grid.addColumn("label").setHeader("Label");
         grid.addColumn("type").setHeader("Type");
@@ -80,7 +79,9 @@ public class ListGridView extends VerticalLayout {
 
 
 
-//        grid.setColumns("propertyName", "description", "label");
+        grid.setItems(all);
+        this.setSizeFull();
+        this.add(this.grid);
 
     }
 
