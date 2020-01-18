@@ -4,6 +4,8 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesBindin
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.Duration;
+
 @Configuration
 public class ConverterAutoConfiguration {
 
@@ -11,6 +13,12 @@ public class ConverterAutoConfiguration {
     @ConfigurationPropertiesBinding
     public PathConverter stringToPathConverter() {
         return new PathConverter();
+    }
+
+    @Bean
+    @ConfigurationPropertiesBinding
+    public DurationConverter stringToDurationConverter() {
+        return new DurationConverter();
     }
 
 }

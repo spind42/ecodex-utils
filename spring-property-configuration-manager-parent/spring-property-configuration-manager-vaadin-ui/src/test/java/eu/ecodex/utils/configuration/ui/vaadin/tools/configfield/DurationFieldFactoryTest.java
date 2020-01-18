@@ -1,24 +1,21 @@
 package eu.ecodex.utils.configuration.ui.vaadin.tools.configfield;
 
 import eu.ecodex.utils.configuration.ui.vaadin.tools.UiConfigurationConversationService;
-import org.junit.Test;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.test.context.TestContext;
 
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@SpringBootTest
+@SpringBootTest(classes = DurationFieldFactoryTest.TestContext.class)
 class DurationFieldFactoryTest {
 
-    @SpringBootApplication
-    //
+    @SpringBootApplication(scanBasePackages = {"eu.ecodex.utils.configuration.ui.vaadin.tools", "eu.ecodex.configuration.spring"})
     public static class TestContext {
 
     }
