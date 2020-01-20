@@ -5,23 +5,23 @@ import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 
 import eu.ecodex.utils.configuration.domain.ConfigurationPropertiesBean;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
+import eu.ecodex.utils.configuration.domain.ConfigurationPropertyNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.SpringProperties;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.Validator;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,12 +51,25 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
      * @return a list of ConfigurationProperty objects
      */
     @Override
-    public List<ConfigurationProperty> getConfigurationProperties(String... basePackageFilter) {
+    public Collection<ConfigurationProperty> getConfigurationProperties(String... basePackageFilter) {
         return getConfigurationProperties(Arrays.asList(basePackageFilter));
     }
 
     @Override
-    public List<ConfigurationProperty> getConfigurationProperties(Class... basePackageClasses) {
+    public ConfigurationPropertyNode getConfigurationPropertiesHirachie(String... basePackageFilter) {
+        return getConfigurationPropertiesHirachie(Arrays.asList(basePackageFilter));
+    }
+
+    private ConfigurationPropertyNode getConfigurationPropertiesHirachie(List<String> asList) {
+        ConfigurationPropertyNode rootNode = new ConfigurationPropertyNode();
+        this.getConfigurationBeans(asList).stream()
+                .forEach(clz -> this.getConfigurationPropertyHirachieFromClazz(new ArrayList<>(), rootNode, clz.getBeanClazz()));
+        return rootNode;
+    }
+
+
+    @Override
+    public Collection<ConfigurationProperty> getConfigurationProperties(Class... basePackageClasses) {
         List<String> collect = Stream.of(basePackageClasses)
                 .map(basePackageClass -> basePackageClass.getPackage().getName())
                 .collect(Collectors.toList());
@@ -64,69 +77,124 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
         return this.getConfigurationProperties(collect);
     }
 
-    public List<ConfigurationProperty> getConfigurationProperties(List<String> basePackageFilter) {
-//        Map<String, Object> configurationBeans = applicationContext.getBeansWithAnnotation(ConfigurationProperties.class);
+    private Collection<ConfigurationProperty> getConfigurationProperties(List<String> basePackageFilter) {
+        return getConfigurationPropertiesMap(basePackageFilter).values();
+    }
+
+    private Map<String, ConfigurationProperty> getConfigurationPropertiesMap(List<String> basePackageFilter) {
         List<ConfigurationPropertiesBean> configurationBeans = this.getConfigurationBeans(basePackageFilter);
 
-        List<ConfigurationProperty> collect = configurationBeans
+        Map<String, ConfigurationProperty> collect = configurationBeans
                 .stream()
                 //filter out classes which aren't in package path basePackageFilter
 //                .filter(new PackageFilter(basePackageFilter))
                 .map(this::processBean)
+                .map(List::stream)
                 .flatMap(Function.identity())
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(c -> c.getPropertyName(), c -> c));
 
         return collect;
     }
 
 
-    private Stream<ConfigurationProperty> processBean(ConfigurationPropertiesBean entry) {
+    private List<ConfigurationProperty> processBean(ConfigurationPropertiesBean entry) {
         LOGGER.trace("processing config bean with name: [{}]", entry.getBeanName());
         Object bean = entry.getBean();
-        Class<?> beanClass = bean.getClass();
+        Class<?> beanClazz = bean.getClass();
 
 //        if (!beanClass.getPackage().getName().startsWith(basePackageFilter)) {
 //            LOGGER.debug("ignore bean [{}] because its not in the scanning package path [{}]", beanClass, basePackageFilter);
 //            return Stream.empty();
 //        }
-        ConfigurationProperties configurationProperties = beanClass.getAnnotation(ConfigurationProperties.class);
-        String pPrefix = configurationProperties.prefix();
-        if (pPrefix.length() > 0) {
-            pPrefix = pPrefix + ".";
-        }
-        final String propertyPrefix = pPrefix;
+        return getConfigurationPropertyFromClazz(beanClazz);
 
-
-        Field[] fields = beanClass.getDeclaredFields(); //TODO: also scan inherited fields...
-        return Stream.of(fields)
-                .map(this::processFieldOfBean)
-                .map(c -> {
-                    c.setPropertyName(propertyPrefix + c.getPropertyName());
-                    return c;
-                })
-                ;
     }
 
-    private ConfigurationProperty processFieldOfBean(Field field) {
+    @Override
+    public List<ConfigurationProperty> getConfigurationPropertyFromClazz(Class<?> beanClass) {
+        List<ConfigurationProperty> configList = new ArrayList<>();
+        getConfigurationPropertyHirachieFromClazz(configList,null, beanClass);
+        return configList;
+    }
+
+    private ConfigurationPropertyNode getConfigurationPropertyHirachieFromClazz(List<ConfigurationProperty> configList, ConfigurationPropertyNode rootNode, Class<?> beanClass) {
+        if (!beanClass.isAnnotationPresent(ConfigurationProperties.class)) {
+            throw new IllegalArgumentException("Class must be annotated with " + ConfigurationProperties.class);
+        }
+        ConfigurationProperties configurationProperties = beanClass.getAnnotation(ConfigurationProperties.class);
+
+        if (rootNode == null) {
+            rootNode = new ConfigurationPropertyNode();
+        }
+        String prefix = configurationProperties.prefix();
+        ConfigurationPropertyNode currentNode = rootNode;
+
+        String[] split = prefix.split("\\.");
+        for (int i = 0; i < split.length; i++) {
+            String nodeName = split[i];
+            if (currentNode.getChild(nodeName).isPresent()) {
+                currentNode = currentNode.getChild(nodeName).get();
+            } else {
+                ConfigurationPropertyNode newNode = new ConfigurationPropertyNode();
+                newNode.setNodeName(nodeName);
+                currentNode.addChild(newNode);
+                currentNode = newNode;
+            }
+        }
+
+        processPropertyClazz(configList, currentNode, beanClass);
+        return currentNode;
+    }
+
+
+//    private static class StackMember {
+//        ConfigurationPropertyNode parentNode;
+//        Class<?> configurationClass;
+//        Field field;
+//    }
+
+    private void processPropertyClazz(List<ConfigurationProperty> configList, ConfigurationPropertyNode parent, Class<?> configurationClass) {
+        Field[] fields = configurationClass.getDeclaredFields(); //TODO: also scan inherited fields...
+//        Field[] fields = configurationClass.getFields();
+        
+
+        Stream.of(fields)
+                .forEach( field -> this.processFieldOfBean(configList, parent, configurationClass, field));
+    }
+
+    private void processFieldOfBean(List<ConfigurationProperty> configList, ConfigurationPropertyNode parent, Class parentClass, Field field) {
         LOGGER.trace("processing field [{}]", field);
-        ConfigurationProperty c = new ConfigurationProperty();
-        c.setPropertyName(field.getName());
+        ConfigurationPropertyNode node;
+        node = new ConfigurationPropertyNode();
+        node.setNodeName(field.getName());
+        parent.addChild(node);
 
-        ConfigurationDescription descriptionAnnotation = AnnotationUtils.getAnnotation(field, ConfigurationDescription.class);
-        if (descriptionAnnotation != null) {
-            String description = (String) AnnotationUtils.getValue(descriptionAnnotation, "description");
-            c.setDescription(description);
+        if (null != AnnotationUtils.getAnnotation(field, NestedConfigurationProperty.class)) {
+            processPropertyClazz(configList, node, field.getType());
+        } else {
+
+            ConfigurationProperty c = new ConfigurationProperty();
+//            c.setPropertyName(parent.getFullNodePath() + field.getName());
+            c.setPropertyName(node.getFullNodePath());
+            c.setBeanPropertyName(field.getName());
+            c.setParentClass(parentClass);
+            configList.add(c);
+            node.setProperty(c);
+
+            ConfigurationDescription descriptionAnnotation = AnnotationUtils.getAnnotation(field, ConfigurationDescription.class);
+            if (descriptionAnnotation != null) {
+                String description = (String) AnnotationUtils.getValue(descriptionAnnotation, "description");
+                c.setDescription(description);
+            }
+
+            ConfigurationLabel configLabelAnnotation = AnnotationUtils.getAnnotation(field, ConfigurationLabel.class);
+            if (configLabelAnnotation != null) {
+                String label = (String) AnnotationUtils.getValue(configLabelAnnotation);
+                c.setLabel(label);
+            }
+            c.setType(field.getType());
         }
 
-        ConfigurationLabel configLabelAnnotation = AnnotationUtils.getAnnotation(field, ConfigurationLabel.class);
-        if (configLabelAnnotation != null) {
-            String label = (String) AnnotationUtils.getValue(configLabelAnnotation);
-            c.setLabel(label);
-        }
-
-        c.setType(field.getType());
-
-        return c;
     }
 
     @Override
