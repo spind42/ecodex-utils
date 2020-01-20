@@ -184,6 +184,13 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>eu.ecodex.connector.utils</groupId>
+                <artifactId>spring-property-configuration-manager-vaadin-ui</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
+
 
 
             <!-- maven plugins -->
