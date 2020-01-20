@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ecodex-utils-parent</artifactId>
         <groupId>eu.ecodex.connector.utils</groupId>
-        <version>0.0.8-SNAPSHOT</version>
+        <version>0.0.8-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,9 +14,11 @@
 
     <properties>
         <swagger.version>2.9.2</swagger.version>
-        <spring.boot.version>2.1.4.RELEASE</spring.boot.version>
+        <spring.boot.version>2.2.3.RELEASE</spring.boot.version>
+        <spring.cloud.version>2.1.5.RELEASE</spring.cloud.version>
         <cxf.version>3.3.4</cxf.version>
         <vaadin.version>14.1.4</vaadin.version>
+        <org.junit.jupiter.version>5.5.2</org.junit.jupiter.version>
     </properties>
 
     <dependencyManagement>
@@ -32,7 +34,7 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.3.2</version>
+                <version>${org.junit.jupiter.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
