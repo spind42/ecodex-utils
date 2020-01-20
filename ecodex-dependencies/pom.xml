@@ -189,7 +189,7 @@
                 <artifactId>spring-property-configuration-manager-vaadin-ui</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            
+
 
 
 
