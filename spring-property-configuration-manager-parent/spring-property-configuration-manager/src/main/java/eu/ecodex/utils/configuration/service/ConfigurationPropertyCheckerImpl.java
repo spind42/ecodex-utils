@@ -1,23 +1,25 @@
 package eu.ecodex.utils.configuration.service;
 
 import eu.ecodex.utils.configuration.domain.ConfigurationPropertiesBean;
-import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.BindException;
 import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.context.properties.bind.validation.BindValidationException;
 import org.springframework.boot.context.properties.bind.validation.ValidationBindHandler;
+import org.springframework.boot.context.properties.bind.validation.ValidationErrors;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.validation.Validator;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ConfigurationPropertyCheckerImpl implements ConfigurationPropertyChecker {
@@ -48,75 +50,110 @@ public class ConfigurationPropertyCheckerImpl implements ConfigurationPropertyCh
         this.configurationPropertyCollector = configurationPropertyCollector;
     }
 
-    public String getStringValueForProperty(ConfigurationProperty configProperty) {
-        return null;
-    }
+//    public String getStringValueForProperty(ConfigurationProperty configProperty) {
+//        return null;
+//    }
+//
+//    public Object getValueForProperty(ConfigurationProperty configProperty) {
+//        return null;
+//    }
 
-    public Object getValueForProperty(ConfigurationProperty configProperty) {
-        return null;
-    }
 
-
-    public void isConfigurationValid(ConfigurationPropertySource configurationPropertySource, Class... basePackageFilter) {
+    public List<ValidationErrors> validateConfiguration(ConfigurationPropertySource configurationPropertySource, Class... basePackageFilter) {
 
         List<String> packageName = Arrays.asList(basePackageFilter)
                 .stream()
                 .map(Class::getPackage)
                 .map(Package::getName)
                 .collect(Collectors.toList());
-        isConfigurationValid(configurationPropertySource, packageName);
+        return validateConfiguration(configurationPropertySource, packageName);
     }
 
-    public void isConfigurationValid(ConfigurationPropertySource configurationPropertySource, String... basePackageFilter) {
-        isConfigurationValid(configurationPropertySource, Arrays.asList(basePackageFilter));
+    public List<ValidationErrors> validateConfiguration(ConfigurationPropertySource configurationPropertySource, String... basePackageFilter) {
+        return validateConfiguration(configurationPropertySource, Arrays.asList(basePackageFilter));
+    }
+
+    @Override
+    public List<ValidationErrors> validateConfiguration(ConfigurationPropertySource configurationPropertySource, Collection<Class> configurationClasses) {
+        LOGGER.debug("#isConfigurationValid for classes: [{}]", configurationClasses);
+
+//        Collection<ConfigurationPropertiesBean> configurationBeans = configurationPropertyCollector.getConfigurationBeans(basePackageFilter);
+
+        List<ValidationErrors> collectErrors = configurationClasses.stream()
+                .map(entry -> this.isConfigValidForClazz(configurationPropertySource, entry))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+
+        return collectErrors;
     }
 
 
     /**
      * Tests if the configuration is valid, all properties are loaded from the
      * provided configuration source
-     *
-     * @param configurationPropertySource - the propertySources
+     *  @param configurationPropertySource - the propertySources
      * @param basePackageFilter           - is only scanning with @ConfigurationProperties annotated classes under the specified package
+     * @return
      */
-    public void isConfigurationValid(ConfigurationPropertySource configurationPropertySource, List<String> basePackageFilter) {
+    public List<ValidationErrors> validateConfiguration(ConfigurationPropertySource configurationPropertySource, List<String> basePackageFilter) {
         LOGGER.debug("#isConfigurationValid for packages: [{}]", basePackageFilter);
 
         Collection<ConfigurationPropertiesBean> configurationBeans = configurationPropertyCollector.getConfigurationBeans(basePackageFilter);
 
-        configurationBeans.stream()
+        List<ValidationErrors> collectErrors = configurationBeans.stream()
+                .map(entry -> this.isConfigValidForClazz(configurationPropertySource, entry.getBeanClazz()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
 
-                .forEach(entry -> {
+        return collectErrors;
+    }
 
-                    Class<?> configClass = entry.getBeanClazz();
-                    try {
-                        Object config = configClass.getDeclaredConstructor().newInstance();
-                        ConfigurationProperties annotation = AnnotationUtils.getAnnotation(configClass, ConfigurationProperties.class);
-                        String prefix = (String) AnnotationUtils.getValue(annotation);
+    private Optional<ValidationErrors> isConfigValidForClazz(ConfigurationPropertySource configurationPropertySource, Class configClass) {
+//        Class<?> configClass = entry.getBeanClazz();
 
-                        Bindable<?> bindable = Bindable.of(configClass).withAnnotations(annotation);
-                        Binder b = new Binder(configurationPropertySource);
-                        LOGGER.debug("Binding class [{}] with prefix [{}]", configClass, prefix);
+//            Object config = configClass.getDeclaredConstructor().newInstance();
+        ConfigurationProperties annotation = AnnotationUtils.getAnnotation(configClass, ConfigurationProperties.class);
+        if (annotation == null) {
+            return Optional.empty();
+        }
+        String prefix = (String) AnnotationUtils.getValue(annotation);
+        if (prefix == null) {
+            prefix = "";
+        }
 
-                        ValidationBindHandler validationBindHandler = new ValidationBindHandler(validator);
+        Bindable<?> bindable = Bindable.of(configClass).withAnnotations(annotation);
+        Binder b = new Binder(configurationPropertySource);
 
-                        BindResult<?> bind = b.bind(prefix, bindable, validationBindHandler);
+        LOGGER.debug("Binding class [{}] with prefix [{}]", configClass, prefix);
 
-                        if (bind.isBound()) {
-                            LOGGER.trace("is bound!");
-                        }
-                        //TODO: validate bounded variables
 
-                    } catch (InstantiationException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                });
+//        DataBinder dataBinder = new DataBinder();
+
+        ValidationBindHandler validationBindHandler = new ValidationBindHandler(validator);
+
+//        validationBindHandler.onFailure()
+
+        try {
+            BindResult<?> bind = b.bind(prefix, bindable, validationBindHandler);
+        } catch (BindValidationException bindValidationException) {
+            return Optional.of(bindValidationException.getValidationErrors());
+        } catch (BindException bindException) {
+            Throwable cause = bindException.getCause();
+            if (cause instanceof BindValidationException) {
+                BindValidationException bve = (BindValidationException) cause;
+                return Optional.of(bve.getValidationErrors());
+            }
+        }
+
+
+//        if (bind.isBound()) {
+//            LOGGER.trace("is bound!");
+//        }
+
+            //TODO: validate bounded variables
+        return Optional.empty();
     }
 
 

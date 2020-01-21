@@ -5,6 +5,7 @@ import org.springframework.lang.Nullable;
 
 public class ConfigurationProperty {
 
+    //TODO: replace with org.springframework.boot.context.properties.source.ConfigurationPropertyName
     private String propertyName;
 
     private String beanPropertyName;

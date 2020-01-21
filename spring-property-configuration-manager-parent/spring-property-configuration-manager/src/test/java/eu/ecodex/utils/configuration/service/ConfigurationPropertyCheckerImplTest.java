@@ -4,22 +4,20 @@ import eu.ecodex.configuration.spring.EnablePropertyConfigurationManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.validation.ValidationErrors;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.PropertySource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
 import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @ExtendWith(SpringExtension.class)
@@ -52,33 +50,34 @@ class ConfigurationPropertyCheckerImplTest {
 //        this.configPropertyChecker = configurationPropertyManager.getConfigChecker();
 //    }
 
-    @Test
-    void getStringValueForProperty() {
-
-    }
-
-    @Test
-    void getValueForProperty() {
-    }
-
-    @Test
-    void isConfigurationValid() {
-    }
-
-    @Test
-    void isConfigurationValid1() {
-    }
+//    @Test
+//    void getStringValueForProperty() {
+//
+//    }
+//
+//    @Test
+//    void getValueForProperty() {
+//    }
+//
+//    @Test
+//    void isConfigurationValid() {
+//    }
+//
+//    @Test
+//    void isConfigurationValid1() {
+//    }
 
 
     @Test
     void isValid() {
         ConfigurationPropertySource configurationPropertySource = new MapConfigurationPropertySource(getExampleProperties1());
-        configPropertyChecker.isConfigurationValid(configurationPropertySource, "eu.ecodex.utils.configuration.testdata");
+        List<ValidationErrors> validationErrors = configPropertyChecker.validateConfiguration(configurationPropertySource, "eu.ecodex.utils.configuration.testdata");
+        assertThat(validationErrors).isEmpty();
 
     }
 
     @Test
-    void isValid_shouldThrow() {
+    void isValid_shouldReturnValidationErrors() {
 
 
         Properties properties = getExampleProperties1();
@@ -87,16 +86,10 @@ class ConfigurationPropertyCheckerImplTest {
         ConfigurationPropertySource configurationPropertySource = new MapConfigurationPropertySource(properties);
 
 
+        List<ValidationErrors> validationErrors = configPropertyChecker.validateConfiguration(configurationPropertySource, "eu.ecodex.utils.configuration.testdata");
 
-        Assertions.assertThrows( org.springframework.boot.context.properties.bind.BindException.class, () -> {
-            try {
-                configPropertyChecker.isConfigurationValid(configurationPropertySource, "eu.ecodex.utils.configuration.testdata");
-            } catch (org.springframework.boot.context.properties.bind.BindException be) {
-                LOGGER.info("Log bind Exception:", be);
-//                LOGGER.info("origin: [{}], Property: [{}], message: [{}] ", be.getProperty().getOrigin(), be.getMessage());
-                throw be;
-            }
-        });
+        assertThat(validationErrors).hasSize(1);
+
     }
 
 }
