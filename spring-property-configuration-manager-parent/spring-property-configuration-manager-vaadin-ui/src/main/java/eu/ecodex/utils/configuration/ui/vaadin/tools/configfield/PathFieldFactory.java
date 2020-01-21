@@ -19,8 +19,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
-@Order(100)
+//@Component
+//@Order(100)
 public class PathFieldFactory implements ConfigurationFieldFactory {
 
     @Autowired
@@ -77,8 +77,9 @@ public class PathFieldFactory implements ConfigurationFieldFactory {
                 (Setter<Properties, String>) (props, value) -> {
                     if (value == null) {
                         props.remove(configurationProperty.getPropertyName());
+                    } else {
+                        props.put(configurationProperty.getPropertyName(), value);
                     }
-                    props.put(configurationProperty.getPropertyName(), value);
                 });
         return tf;
 

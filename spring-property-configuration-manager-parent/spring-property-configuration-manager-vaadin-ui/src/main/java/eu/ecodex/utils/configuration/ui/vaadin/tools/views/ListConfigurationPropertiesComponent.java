@@ -5,26 +5,31 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationResult;
-import com.vaadin.flow.data.binder.Validator;
-import com.vaadin.flow.data.binder.ValueContext;
+import com.vaadin.flow.data.binder.*;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
+import eu.ecodex.utils.configuration.service.ConfigurationPropertyChecker;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
 import eu.ecodex.utils.configuration.ui.vaadin.tools.ConfigurationFormFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.context.properties.bind.validation.ValidationErrors;
+import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
+import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 import org.springframework.context.annotation.Scope;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,9 +45,14 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
     ConfigurationPropertyCollector configurationPropertyCollector;
 
     @Autowired
+    ConfigurationPropertyChecker configurationPropertyChecker;
+
+    @Autowired
     ConfigurationFormFactory configurationFormFactory;
 
     Properties properties = new Properties();
+
+    Label statusLabel = new Label();
 
     Binder<Properties> binder = new Binder();
 
@@ -78,11 +88,12 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
 
         grid.setItems(configurationProperties);
 
+
         //TODO: add validation error field before ListView
 
         this.setSizeFull();
         this.add(this.grid);
-
+        this.add(this.statusLabel);
     }
 
     public Binder<Properties> getBinder() {
@@ -101,7 +112,6 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
         this.configurationProperties = configurationProperties;
         this.grid.setItems(configurationProperties);
 
-
         List<Class> configClasses = configurationProperties
                 .stream()
                 .map(prop -> prop.getParentClass())
@@ -111,13 +121,37 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
         binder.withValidator(new Validator<Properties>() {
             @Override
             public ValidationResult apply(Properties value, ValueContext context) {
-
-                return null;
+                ConfigurationPropertySource configSource = new MapConfigurationPropertySource(value);
+                List<ValidationErrors> validationErrors = configurationPropertyChecker.validateConfiguration(configSource, configClasses);
+                if (validationErrors.isEmpty()) {
+                    return ValidationResult.ok();
+                }
+                //TODO: improve error representation
+                String errString = validationErrors.stream().map(err -> err.getAllErrors().stream())
+                        .flatMap(Function.identity())
+                        .map(objectError -> {
+                            if (objectError instanceof FieldError) {
+                                FieldError fieldError = (FieldError) objectError;
+                                return fieldError.getObjectName() + "." + fieldError.getField() + ": " + fieldError.getDefaultMessage();
+                            }
+                            return objectError.getObjectName() + ": " + objectError.getDefaultMessage();
+                        })
+                        .collect(Collectors.joining("; "));
+                return ValidationResult.error(errString);
             }
         });
+//        binder.setStatusLabel(this.statusLabel);
+
     }
 
     public void validate() {
-        this.binder.validate();
+
+        BinderValidationStatus<Properties> validate = this.binder.validate();
+        List<ValidationResult> beanValidationErrors = validate.getBeanValidationErrors();
+        LOGGER.trace("BeanValidationErrors: [{}]", beanValidationErrors);
+        String collect = beanValidationErrors.stream()
+                .map(error -> error.getErrorMessage())
+                .collect(Collectors.joining("\n\n"));
+        this.statusLabel.setText(collect);
     }
 }

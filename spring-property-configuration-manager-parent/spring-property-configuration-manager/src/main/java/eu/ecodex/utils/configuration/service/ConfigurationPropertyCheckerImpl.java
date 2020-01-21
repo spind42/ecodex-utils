@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.BindException;
 import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
@@ -114,7 +115,13 @@ public class ConfigurationPropertyCheckerImpl implements ConfigurationPropertyCh
 
 //            Object config = configClass.getDeclaredConstructor().newInstance();
         ConfigurationProperties annotation = AnnotationUtils.getAnnotation(configClass, ConfigurationProperties.class);
+        if (annotation == null) {
+            return Optional.empty();
+        }
         String prefix = (String) AnnotationUtils.getValue(annotation);
+        if (prefix == null) {
+            prefix = "";
+        }
 
         Bindable<?> bindable = Bindable.of(configClass).withAnnotations(annotation);
         Binder b = new Binder(configurationPropertySource);
@@ -132,6 +139,12 @@ public class ConfigurationPropertyCheckerImpl implements ConfigurationPropertyCh
             BindResult<?> bind = b.bind(prefix, bindable, validationBindHandler);
         } catch (BindValidationException bindValidationException) {
             return Optional.of(bindValidationException.getValidationErrors());
+        } catch (BindException bindException) {
+            Throwable cause = bindException.getCause();
+            if (cause instanceof BindValidationException) {
+                BindValidationException bve = (BindValidationException) cause;
+                return Optional.of(bve.getValidationErrors());
+            }
         }
 
 

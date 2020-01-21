@@ -7,6 +7,7 @@ import com.vaadin.flow.function.ValueProvider;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import eu.ecodex.utils.configuration.ui.vaadin.tools.ConfigurationFieldFactory;
 import eu.ecodex.utils.configuration.ui.vaadin.tools.UiConfigurationConversationService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -32,7 +33,7 @@ public class DefaultTextFieldFactory implements ConfigurationFieldFactory {
 
     @Override
     public boolean canHandle(Class clazz) {
-        return conversionService.canConvert(clazz, String.class);
+        return conversionService.canConvert(String.class, clazz);
     }
 
     @Override
@@ -52,8 +53,10 @@ public class DefaultTextFieldFactory implements ConfigurationFieldFactory {
 
                     Object convertedValue = value;
                     try {
-                        if (value != null) {
+                        if (StringUtils.isNotEmpty(value)) {
                             convertedValue = conversionService.convert(value, configurationProperty.getType());
+                        } else {
+                            convertedValue = null;
                         }
                     } catch (ConversionFailedException conversionFailed) {
                         //TODO: improve error message...
@@ -64,7 +67,9 @@ public class DefaultTextFieldFactory implements ConfigurationFieldFactory {
                     if (constraintViolationSet.isEmpty()) {
                         return ValidationResult.ok();
                     }
-                    String errors = constraintViolationSet.stream().map(constraintViolation -> constraintViolation.getMessage()).collect(Collectors.joining("\n"));
+                    String errors = constraintViolationSet.stream()
+                            .map(constraintViolation -> constraintViolation.getMessage())
+                            .collect(Collectors.joining("\n"));
                     return ValidationResult.error(errors);
                 }
             });
@@ -77,8 +82,9 @@ public class DefaultTextFieldFactory implements ConfigurationFieldFactory {
                 (Setter<Properties, String>) (props, value) -> {
                     if (value == null) {
                         props.remove(configurationProperty.getPropertyName());
+                    } else {
+                        props.put(configurationProperty.getPropertyName(), value);
                     }
-                    props.put(configurationProperty.getPropertyName(), value);
                 });
         return tf;
     }
