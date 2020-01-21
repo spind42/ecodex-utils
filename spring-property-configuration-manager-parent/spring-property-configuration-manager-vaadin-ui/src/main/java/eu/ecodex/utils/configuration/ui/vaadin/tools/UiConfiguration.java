@@ -1,9 +1,12 @@
 package eu.ecodex.utils.configuration.ui.vaadin.tools;
 
+import eu.ecodex.utils.configuration.ui.vaadin.tools.configfield.DefaultTextFieldFactory;
+import eu.ecodex.utils.configuration.ui.vaadin.tools.views.ListConfigurationPropertiesComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.convert.ConversionService;
@@ -18,8 +21,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Configuration
+@ComponentScan(basePackageClasses = {ListConfigurationPropertiesComponent.class, DefaultTextFieldFactory.class})
 public class UiConfiguration {
-
 
 
     @Autowired(required = false)
