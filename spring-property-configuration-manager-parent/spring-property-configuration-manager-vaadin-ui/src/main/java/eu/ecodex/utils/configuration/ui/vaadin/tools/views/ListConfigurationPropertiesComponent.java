@@ -141,7 +141,7 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
 
     }
 
-    public void validate() {
+    public List<ValidationResult> validate() {
 
         BinderValidationStatus<Properties> validate = this.binder.validate();
         List<ValidationResult> beanValidationErrors = validate.getBeanValidationErrors();
@@ -150,5 +150,6 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
                 .map(error -> error.getErrorMessage())
                 .collect(Collectors.joining("\n\n"));
         this.statusLabel.setText(collect);
+        return beanValidationErrors;
     }
 }
