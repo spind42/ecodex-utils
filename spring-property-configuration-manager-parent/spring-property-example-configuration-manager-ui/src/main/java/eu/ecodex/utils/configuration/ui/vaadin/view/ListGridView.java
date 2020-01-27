@@ -46,6 +46,7 @@ public class ListGridView extends VerticalLayout {
 //    Button validate;
     Button saveProperties;
     Button resetProperties;
+    Button setConfigClasses;
 
     public ListGridView() {
 
@@ -58,17 +59,20 @@ public class ListGridView extends VerticalLayout {
 
         initUi();
 
-        List<ConfigurationProperty> configurationProperties = Stream.of(Example1ConfigurationProperties.class)
-                .map(clz -> configurationPropertyCollector.getConfigurationPropertyFromClazz(clz).stream())
-                .flatMap(Function.identity()).collect(Collectors.toList());
-
-        listConfigurationPropertiesComponent.setConfigurationProperties(configurationProperties);
+//        List<ConfigurationProperty> configurationProperties = Stream.of(Example1ConfigurationProperties.class)
+//                .map(clz -> configurationPropertyCollector.getConfigurationPropertyFromClazz(clz).stream())
+//                .flatMap(Function.identity()).collect(Collectors.toList());
+//
+//        listConfigurationPropertiesComponent.setConfigurationProperties(configurationProperties);
 
         initProperties();
 
     }
 
     private void initUi() {
+        setConfigClasses = new Button("set Config Classes");
+        setConfigClasses.addClickListener(this::setConfigClasses);
+        this.add(setConfigClasses);
         saveProperties = new Button("Save Properties");
         saveProperties.addClickListener(this::saveProperties);
         this.add(saveProperties);
@@ -76,6 +80,15 @@ public class ListGridView extends VerticalLayout {
         resetProperties.addClickListener(this::resetProperties);
         this.add(resetProperties);
         this.add(listConfigurationPropertiesComponent);
+    }
+
+    private void setConfigClasses(ClickEvent<Button> buttonClickEvent) {
+        List<ConfigurationProperty> configurationProperties = Stream.of(Example1ConfigurationProperties.class)
+                .map(clz -> configurationPropertyCollector.getConfigurationPropertyFromClazz(clz).stream())
+                .flatMap(Function.identity()).collect(Collectors.toList());
+
+        listConfigurationPropertiesComponent.setConfigurationProperties(configurationProperties);
+
     }
 
     private void resetProperties(ClickEvent<Button> buttonClickEvent) {
