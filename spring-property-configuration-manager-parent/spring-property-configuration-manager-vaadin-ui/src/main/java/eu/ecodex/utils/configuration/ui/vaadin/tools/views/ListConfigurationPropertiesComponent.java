@@ -56,6 +56,8 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
     Binder<Properties> binder = new Binder();
 
     private Collection<ConfigurationProperty> configurationProperties = new ArrayList<>();
+    private Collection<AbstractField> propertyFields = new ArrayList<>();
+    private boolean readOnly = false;
 
     public ListConfigurationPropertiesComponent() {
     }
@@ -72,7 +74,7 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
             @Override
             public Component apply(ConfigurationProperty configurationProperty) {
                 AbstractField field = configurationFormFactory.createField(configurationProperty, binder);
-
+                propertyFields.add(field);
                 return field;
             }
         });
@@ -90,7 +92,6 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
 
         //TODO: add validation error field before ListView
 
-//        this.setSizeFull();
         this.add(this.grid);
         this.add(this.statusLabel);
     }
@@ -155,4 +156,8 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
         return beanValidationErrors;
     }
 
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+        propertyFields.stream().forEach(f -> f.setReadOnly(readOnly));
+    }
 }

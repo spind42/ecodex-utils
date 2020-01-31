@@ -14,6 +14,7 @@
         <module>logging-tester</module>
         <module>spring-quartz-tools</module>
         <module>spring-boot-property-converter</module>
+        <module>ecodex-monitor</module>
     </modules>
     <packaging>pom</packaging>
 
