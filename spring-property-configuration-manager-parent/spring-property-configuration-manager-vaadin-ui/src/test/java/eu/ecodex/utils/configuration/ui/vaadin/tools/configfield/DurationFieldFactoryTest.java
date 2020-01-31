@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.core.io.Resource;
 
 import java.time.Duration;
 
@@ -20,20 +21,26 @@ class DurationFieldFactoryTest {
 
     }
 
-
     @Autowired
     @UiConfigurationConversationService
     ConversionService conversionService;
 
     @Test
-    void testConversionService() {
+    void testConversionServiceDuration() {
         String duration = "10s";
 
         Duration convert = conversionService.convert(duration, Duration.class);
 
         assertThat(convert).isEqualTo(Duration.ofSeconds(10));
+    }
 
+    @Test
+    void testConversionServiceResource() {
+        String duration = "classpath:/META-INF/spring.factories";
 
+        Resource convert = conversionService.convert(duration, Resource.class);
+
+//        assertThat(convert).isEqualTo(Duration.ofSeconds(10));
     }
 
 }

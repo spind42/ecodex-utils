@@ -21,4 +21,8 @@ public class ConverterAutoConfiguration {
         return new DurationConverter();
     }
 
+    @Bean
+    @ConfigurationPropertiesBinding
+    public ResourceConverter stringToResourceConverter() {return new ResourceConverter(); }
+
 }

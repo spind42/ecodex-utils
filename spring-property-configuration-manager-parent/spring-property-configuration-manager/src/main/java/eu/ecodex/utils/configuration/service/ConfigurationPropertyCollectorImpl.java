@@ -157,9 +157,6 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
 
     private void processPropertyClazz(List<ConfigurationProperty> configList, ConfigurationPropertyNode parent, Class<?> configurationClass) {
         Field[] fields = configurationClass.getDeclaredFields(); //TODO: also scan inherited fields...
-//        Field[] fields = configurationClass.getFields();
-
-
 
         Stream.of(fields)
                 .filter(field -> {

@@ -133,7 +133,7 @@ public class ConfigurationFormsFactoryImpl implements ConfigurationFormsFactory 
             field = configurationFieldFactory.createField(prop, binder);
             return field;
         } else {
-            throw new RuntimeException("No Field Factory found for property " + prop);
+            throw new RuntimeException(String.format("No Field Factory found for property %s with type [%s]", prop, prop.getType()));
             //Just create a simple text field...
 //            field = createField(prop, binder);
         }
