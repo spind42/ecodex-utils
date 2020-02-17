@@ -9,6 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <description>Parent project of multiple libraries which will assist on ConfigurationProperty management within an spring boot application</description>
+
     <groupId>eu.ecodex.connector.utils</groupId>
     <artifactId>spring-property-configuration-manager-parent</artifactId>
     <packaging>pom</packaging>
@@ -17,7 +19,24 @@
         <module>spring-property-configuration-manager</module>
         <module>spring-property-example-configuration-manager-ui</module>
         <module>spring-property-configuration-manager-vaadin-ui</module>
+        <module>spring-property-configuration-processor</module>
+        <module>spring-property-configuration-validator</module>
+        <module>spring-property-configuration-common</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>eu.ecodex.connector.utils</groupId>
+                <artifactId>ecodex-dependencies</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
 
 
 </project>

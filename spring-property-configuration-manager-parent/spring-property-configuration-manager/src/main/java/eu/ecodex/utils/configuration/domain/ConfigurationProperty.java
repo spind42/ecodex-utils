@@ -17,6 +17,12 @@ public class ConfigurationProperty {
     private Class type;
 
     /**
+     * Holds the with org.springframework.boot.context.properties.bind.DefaultValue
+     * annotated default value
+     */
+    private String[] defaultValue;
+
+    /**
      * The class this property is part of
      */
     @Nullable
@@ -60,6 +66,14 @@ public class ConfigurationProperty {
 
     public void setType(Class type) {
         this.type = type;
+    }
+
+    public String[] getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String[] defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     public String toString() {

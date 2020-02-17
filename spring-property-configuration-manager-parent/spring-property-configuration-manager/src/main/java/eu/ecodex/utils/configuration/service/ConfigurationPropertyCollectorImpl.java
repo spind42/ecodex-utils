@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -199,7 +200,16 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
                 String label = (String) AnnotationUtils.getValue(configLabelAnnotation);
                 c.setLabel(label);
             }
+
+            DefaultValue defaultValueAnnotation = AnnotationUtils.getAnnotation(field, DefaultValue.class);
+            if (defaultValueAnnotation != null) {
+                c.setDefaultValue(defaultValueAnnotation.value());
+            }
+
             c.setType(field.getType());
+
+
+
         }
 
     }

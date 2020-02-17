@@ -12,6 +12,9 @@
     <groupId>eu.ecodex.connector.utils</groupId>
     <artifactId>ecodex-monitor</artifactId>
 
+    <description>This project can be deployed as a war and will expose certificate states and activeMq queues over the spring actuator interface.
+    This will make monitoring of certificate and queue states in the e-Codex components easier.</description>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
