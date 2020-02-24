@@ -7,16 +7,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
 
-@Validated
 @CheckStoreIsLoadable
 public class StoreConfigurationProperties {
 
@@ -33,6 +35,12 @@ public class StoreConfigurationProperties {
      */
     @NotNull
     private String password;
+
+    /**
+     * Type of the java key store
+     */
+    @NotNull
+    private String type = "JKS";
 
     public StoreConfigurationProperties() {}
 
@@ -57,7 +65,15 @@ public class StoreConfigurationProperties {
         this.password = password;
     }
 
-     public String getPathUrlAsString() {
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getPathUrlAsString() {
         try {
             if (path == null) {
                 LOGGER.debug("#getPathUrlAsString: resolved to null");
@@ -83,6 +99,23 @@ public class StoreConfigurationProperties {
         } catch (IOException e) {
             throw new ValidationException("IOException occured during open", e);
         }
+    }
+
+    public void validatePathWriteable() {
+        if (getPath() == null) {
+            throw new ValidationException("Path is null!");
+        }
+        try {
+            if (Files.isWritable(Paths.get(getPath().getURI()))) {
+
+            }
+            throw new ValidationException("Path not writeable!");
+        } catch (IOException e) {
+            throw new ValidationException("IOException occured during open", e);
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("IllegalArgumentException occured during open", e);
+        }
+
     }
 
     public void validateKeyExists(String alias, String password) {
@@ -117,13 +150,17 @@ public class StoreConfigurationProperties {
     }
 
     public KeyStore loadKeyStore() {
-        validatePathReadable();
+        try {
+            validatePathReadable();
+        } catch (ValidationException ve) {
+            throw new CannotLoadKeyStoreException(String.format("Cannot load key store from path %s", getPath()), ve);
+        }
         if (password == null) {
             password = "";
         }
         char[] pwdArray = password.toCharArray();
         try (InputStream inputStream = getPath().getInputStream()) {
-            KeyStore keyStore = KeyStore.getInstance("JKS");
+            KeyStore keyStore = KeyStore.getInstance(this.type);
             keyStore.load(inputStream, pwdArray);
             return keyStore;
         } catch (IOException | KeyStoreException | CertificateException | NoSuchAlgorithmException e) {
