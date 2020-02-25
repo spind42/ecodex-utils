@@ -24,10 +24,13 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+        "monitor.activemq.jmx-url[0]=service:jmx:rmi:///jndi/rmi://localhost:1616/jmxrmi",
+        "monitor.activemq.jmx-user=admin",
+        "monitor.activemq.jmx-password=admin",
+})
 @ActiveProfiles("test")
-@EnableJms
-class ActiveMqQueuesMonitorEndpointTest {
+class ActiveMqQueuesMonitorOverJmxEndpointTest {
 
     public static final String USERNAME = "admin";
     public static final String PASSWORD = "admin";
@@ -42,9 +45,12 @@ class ActiveMqQueuesMonitorEndpointTest {
         BrokerRegistry reg = BrokerRegistry.getInstance();
 
         BrokerService broker = new BrokerService();
-        reg.bind("broker", broker);
+//        reg.bind("broker", broker);
 
         broker.addConnector("vm://localhost?broker.persistent=false");
+
+
+
         broker.start();
 
 

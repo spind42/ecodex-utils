@@ -7,15 +7,14 @@ import eu.ecodex.utils.monitor.app.keystores.config.NamedKeyTrustStore;
 import eu.ecodex.utils.monitor.app.keystores.report.StoreEntryInfo;
 import eu.ecodex.utils.monitor.app.keystores.report.StoreInfo;
 import io.micrometer.core.instrument.util.StringUtils;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.NotBlank;
 import java.beans.PropertyDescriptor;
