@@ -25,6 +25,14 @@
                     <groupId>org.apache.activemq</groupId>
                     <artifactId>activemq-all</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty.websocket</groupId>
+                    <artifactId>websocket-server</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-continuation</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -84,6 +92,12 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>provided</scope>
         </dependency>
 
 
