@@ -27,7 +27,6 @@ import java.security.cert.CertificateEncodingException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
 public class KeyService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyService.class);

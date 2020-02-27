@@ -4,6 +4,7 @@ import eu.ecodex.utils.monitor.keystores.config.CertificateConfigurationProperti
 import eu.ecodex.utils.monitor.keystores.config.KeyCheck;
 
 import eu.ecodex.utils.monitor.keystores.dto.StoreEntryInfo;
+import eu.ecodex.utils.monitor.keystores.service.crtprocessor.X509CertificateToStoreEntryInfoProcessorImpl;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,6 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.util.Date;
 
-@Component
-@ConditionalOnProperty(prefix = CertificateConfigurationProperties.CERTIFICATE_MONITOR_PREFIX, value = "enabled", havingValue = "true")
 public class CertificateHealthIndicator extends AbstractHealthIndicator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateHealthIndicator.class);

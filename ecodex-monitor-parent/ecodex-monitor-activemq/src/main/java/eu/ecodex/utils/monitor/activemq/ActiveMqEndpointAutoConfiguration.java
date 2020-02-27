@@ -1,11 +1,17 @@
 package eu.ecodex.utils.monitor.activemq;
 
+import eu.ecodex.utils.monitor.activemq.config.ActiveMqEndpointConfigurationProperties;
+import eu.ecodex.utils.monitor.activemq.config.ActiveMqMetricConfigurationProperties;
+import eu.ecodex.utils.monitor.activemq.service.ActiveMqMetricService;
+import eu.ecodex.utils.monitor.activemq.service.ActiveMqQueuesMonitorEndpoint;
+import eu.ecodex.utils.monitor.activemq.service.DestinationService;
 import org.apache.activemq.web.BrokerFacade;
 import org.apache.activemq.web.RemoteJMXBrokerFacade;
 import org.apache.activemq.web.SingletonBrokerFacade;
 import org.apache.activemq.web.config.WebConsoleConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -18,13 +24,37 @@ import javax.management.remote.JMXServiceURL;
 import java.util.Collection;
 
 @Configuration
-@Conditional(ActiveMqMonitoringEnabledCondition.class)
 @EnableConfigurationProperties(ActiveMqEndpointConfigurationProperties.class)
+@ConditionalOnProperty(prefix = ActiveMqEndpointConfigurationProperties.ACTIVEMQ_MONITOR_PREFIX, name = "enabled", havingValue = "true")
 @ComponentScan(basePackageClasses = ActiveMqEndpointAutoConfiguration.class)
 public class ActiveMqEndpointAutoConfiguration {
 
+    @Configuration
+
+//    @ConditionalOnProperty(prefix = ActiveMqEndpointConfigurationProperties.ACTIVEMQ_MONITOR_PREFIX, name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = ActiveMqMetricConfigurationProperties.PREFIX, name = "enabled", havingValue = "true")
+    @EnableConfigurationProperties(ActiveMqMetricConfigurationProperties.class)
+    public static class MetricConfiguration {
+        @Bean
+        @Lazy(false)
+        ActiveMqMetricService activeMqMetricService() {
+            return new ActiveMqMetricService();
+        }
+    }
+
+
     @Autowired
     ActiveMqEndpointConfigurationProperties configurationProperties;
+
+    @Bean
+    ActiveMqQueuesMonitorEndpoint monitorEndpoint() {
+        return new ActiveMqQueuesMonitorEndpoint();
+    }
+
+    @Bean
+    DestinationService destinationService() {
+        return new DestinationService();
+    }
 
     @Bean
     @Conditional(JmxUrlNotEmptyCondition.class)

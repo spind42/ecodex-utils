@@ -1,4 +1,4 @@
-package eu.ecodex.utils.monitor.activemq;
+package eu.ecodex.utils.monitor.activemq.service;
 
 import eu.ecodex.utils.monitor.activemq.dto.DestinationInfo;
 import org.apache.activemq.broker.jmx.DestinationViewMBean;
@@ -8,20 +8,17 @@ import org.apache.activemq.web.BrokerFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Conditional(ActiveMqMonitoringEnabledCondition.class)
 @Endpoint(id = ActiveMqQueuesMonitorEndpoint.ENDPOINT_ID)
-@Component
 public class ActiveMqQueuesMonitorEndpoint {
 
 
     public static final String ENDPOINT_ID = "activemqdestinations";
+
     @Autowired
     BrokerFacade activeMqBrokerFacade;
 
@@ -57,6 +54,9 @@ public class ActiveMqQueuesMonitorEndpoint {
         info.setEnqueueCount(dst.getEnqueueCount());
         info.setMaxEnqueueTime(dst.getMaxEnqueueTime());
         info.setStoreMessageSize(dst.getStoreMessageSize());
+        info.setMemoryLimit(dst.getMemoryLimit());
+        info.setTempUsageLimit(dst.getTempUsageLimit());
+        info.setMaxPageSize(dst.getMaxPageSize());
 
         return info;
     }

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Endpoint(id = "certificates")
-@Component
 public class CertificatesEndpoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificatesEndpoint.class);

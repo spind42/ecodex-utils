@@ -1,4 +1,4 @@
-package eu.ecodex.utils.monitor.activemq;
+package eu.ecodex.utils.monitor.activemq.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

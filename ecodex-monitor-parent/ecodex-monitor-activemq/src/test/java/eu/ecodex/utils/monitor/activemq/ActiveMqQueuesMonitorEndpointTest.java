@@ -2,6 +2,7 @@ package eu.ecodex.utils.monitor.activemq;
 
 
 import eu.ecodex.utils.monitor.activemq.dto.DestinationInfo;
+import eu.ecodex.utils.monitor.activemq.service.ActiveMqQueuesMonitorEndpoint;
 import org.apache.activemq.broker.BrokerRegistry;
 import org.apache.activemq.broker.BrokerService;
 import org.junit.jupiter.api.BeforeAll;

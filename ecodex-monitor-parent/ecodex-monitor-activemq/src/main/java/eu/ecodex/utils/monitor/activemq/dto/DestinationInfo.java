@@ -19,7 +19,13 @@ public class DestinationInfo {
 
     private long storeMessageSize;
 
+    private long memoryLimit;
+
     private long maxEnqueueTime;
+
+    private long tempUsageLimit;
+
+    private long maxPageSize;
 
     public static enum DestinationType {
         QUEUE, TOPIC, NOT_KNOWN;

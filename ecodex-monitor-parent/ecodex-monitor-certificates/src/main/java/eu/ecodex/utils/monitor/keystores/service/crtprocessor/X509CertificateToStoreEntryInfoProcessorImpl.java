@@ -1,12 +1,10 @@
-package eu.ecodex.utils.monitor.keystores.service;
+package eu.ecodex.utils.monitor.keystores.service.crtprocessor;
 
 import eu.ecodex.utils.monitor.keystores.CertificateToStoreEntryInfoProcessor;
-import eu.ecodex.utils.monitor.keystores.ConditionalOnCertificatesCheckEnabled;
 import eu.ecodex.utils.monitor.keystores.dto.StoreEntryInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
