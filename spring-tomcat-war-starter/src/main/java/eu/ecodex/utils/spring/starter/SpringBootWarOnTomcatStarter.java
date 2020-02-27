@@ -86,7 +86,7 @@ public abstract class SpringBootWarOnTomcatStarter extends SpringBootServletInit
         return application;
     }
 
-    private void configureApplicationContext(SpringApplicationBuilder application, Properties springProperties) {
+    protected void configureApplicationContext(SpringApplicationBuilder application, Properties springProperties) {
     }
 
     /**

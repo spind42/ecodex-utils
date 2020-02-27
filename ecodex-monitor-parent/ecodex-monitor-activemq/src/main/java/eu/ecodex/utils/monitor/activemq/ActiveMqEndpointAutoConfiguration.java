@@ -1,7 +1,9 @@
 package eu.ecodex.utils.monitor.activemq;
 
 import eu.ecodex.utils.monitor.activemq.config.ActiveMqEndpointConfigurationProperties;
+import eu.ecodex.utils.monitor.activemq.config.ActiveMqHealthChecksConfigurationProperties;
 import eu.ecodex.utils.monitor.activemq.config.ActiveMqMetricConfigurationProperties;
+import eu.ecodex.utils.monitor.activemq.service.ActiveMqHealthService;
 import eu.ecodex.utils.monitor.activemq.service.ActiveMqMetricService;
 import eu.ecodex.utils.monitor.activemq.service.ActiveMqQueuesMonitorEndpoint;
 import eu.ecodex.utils.monitor.activemq.service.DestinationService;
@@ -30,8 +32,6 @@ import java.util.Collection;
 public class ActiveMqEndpointAutoConfiguration {
 
     @Configuration
-
-//    @ConditionalOnProperty(prefix = ActiveMqEndpointConfigurationProperties.ACTIVEMQ_MONITOR_PREFIX, name = "enabled", havingValue = "true")
     @ConditionalOnProperty(prefix = ActiveMqMetricConfigurationProperties.PREFIX, name = "enabled", havingValue = "true")
     @EnableConfigurationProperties(ActiveMqMetricConfigurationProperties.class)
     public static class MetricConfiguration {
@@ -41,6 +41,20 @@ public class ActiveMqEndpointAutoConfiguration {
             return new ActiveMqMetricService();
         }
     }
+
+
+    @Configuration
+    @ConditionalOnProperty(prefix = ActiveMqHealthChecksConfigurationProperties.PREFIX, name = "enabled", havingValue = "true")
+    @EnableConfigurationProperties(ActiveMqHealthChecksConfigurationProperties.class)
+    public static class HealthConfiguration {
+        @Bean
+        @Lazy(false)
+        ActiveMqHealthService activeMqHealthService() {
+            return new ActiveMqHealthService();
+        }
+    }
+
+
 
 
     @Autowired

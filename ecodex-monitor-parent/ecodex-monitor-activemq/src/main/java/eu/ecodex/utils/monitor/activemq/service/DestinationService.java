@@ -8,6 +8,7 @@ import org.apache.activemq.web.BrokerFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,11 +19,20 @@ public class DestinationService {
     @Autowired
     BrokerFacade activeMqBrokerFacade;
 
-    public List<DestinationInfo> getDestinationInfos() throws Exception {
-        List<DestinationViewMBean> destinations = new ArrayList<>();
+    List<DestinationViewMBean> destinations = new ArrayList<>();
 
+    @PostConstruct
+    public void init() throws Exception {
         destinations.addAll(activeMqBrokerFacade.getQueues());
         destinations.addAll(activeMqBrokerFacade.getTopics());
+    }
+
+
+    public List<DestinationViewMBean> getDestinations() {
+        return this.destinations;
+    }
+
+    public List<DestinationInfo> getDestinationInfos() throws Exception {
 
         return destinations.stream()
                 .map(this::mapToQueueInfo)
