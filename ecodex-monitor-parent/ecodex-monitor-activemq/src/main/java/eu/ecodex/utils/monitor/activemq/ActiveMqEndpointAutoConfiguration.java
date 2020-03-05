@@ -3,10 +3,9 @@ package eu.ecodex.utils.monitor.activemq;
 import eu.ecodex.utils.monitor.activemq.config.ActiveMqEndpointConfigurationProperties;
 import eu.ecodex.utils.monitor.activemq.config.ActiveMqHealthChecksConfigurationProperties;
 import eu.ecodex.utils.monitor.activemq.config.ActiveMqMetricConfigurationProperties;
-import eu.ecodex.utils.monitor.activemq.service.ActiveMqHealthService;
-import eu.ecodex.utils.monitor.activemq.service.ActiveMqMetricService;
-import eu.ecodex.utils.monitor.activemq.service.ActiveMqQueuesMonitorEndpoint;
-import eu.ecodex.utils.monitor.activemq.service.DestinationService;
+import eu.ecodex.utils.monitor.activemq.service.*;
+import io.micrometer.core.instrument.util.StringUtils;
+import org.apache.activemq.broker.BrokerRegistry;
 import org.apache.activemq.web.BrokerFacade;
 import org.apache.activemq.web.RemoteJMXBrokerFacade;
 import org.apache.activemq.web.SingletonBrokerFacade;
@@ -24,6 +23,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 import javax.jms.ConnectionFactory;
 import javax.management.remote.JMXServiceURL;
 import java.util.Collection;
+import java.util.Optional;
 
 @Configuration
 @EnableConfigurationProperties(ActiveMqEndpointConfigurationProperties.class)
@@ -71,17 +71,14 @@ public class ActiveMqEndpointAutoConfiguration {
     }
 
     @Bean
-    @Conditional(JmxUrlNotEmptyCondition.class)
-    BrokerFacade jmxBrokerFacade() {
-//        String jmxUrl = configurationProperties.getJmxUrl();
-
-        RemoteJMXBrokerFacade remoteJMXBrokerFacade = new RemoteJMXBrokerFacade();
-        remoteJMXBrokerFacade.setBrokerName("broker");
-        remoteJMXBrokerFacade.setConfiguration(getWebConsoleConfiguration());
-
-        return remoteJMXBrokerFacade;
+    BrokerFacadeFactory brokerFacadeFactory() {
+        return new BrokerFacadeFactory();
     }
 
+//    @Bean
+//    BrokerFacade brokerFacade() throws Exception {
+//        return brokerFacadeFactory().getObject();
+//    }
 
     @Bean
     @ConditionalOnMissingBean
@@ -90,40 +87,31 @@ public class ActiveMqEndpointAutoConfiguration {
         return brokerFacade;
     }
 
-    private WebConsoleConfiguration getWebConsoleConfiguration() {
 
-        return new WebConsoleConfiguration() {
-            @Override
-            public ConnectionFactory getConnectionFactory() {
-                return null;
-            }
-
-            @Override
-            public Collection<JMXServiceURL> getJmxUrls() {
-                return configurationProperties.getJmxUrl();
-            }
-
-            @Override
-            public String getJmxUser() {
-                return configurationProperties.getJmxUser();
-            }
-
-            @Override
-            public String getJmxPassword() {
-                return configurationProperties.getJmxPassword();
-            }
-        };
-    }
-
-    public static class JmxUrlNotEmptyCondition implements Condition {
-
-        @Override
-        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+    public abstract static class ActiveMqEndpointConfigurationPropertiesCondition implements Condition {
+        Optional<ActiveMqEndpointConfigurationProperties> getProps(ConditionContext context) {
             Bindable<ActiveMqEndpointConfigurationProperties> bindable = Bindable.of(ActiveMqEndpointConfigurationProperties.class);
             Binder binder = Binder.get(context.getEnvironment());
             BindResult<ActiveMqEndpointConfigurationProperties> bindResult = binder.bind(ActiveMqEndpointConfigurationProperties.ACTIVEMQ_MONITOR_PREFIX, bindable, null);
-            ActiveMqEndpointConfigurationProperties bean = bindResult.orElse(null);
-            return bean != null && bean.getJmxUrl().size() > 0;
+            return Optional.ofNullable(bindResult.orElse(null));
+        }
+    }
+
+    public static class JmxUrlNotEmptyCondition extends ActiveMqEndpointConfigurationPropertiesCondition {
+
+        @Override
+        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            Optional<ActiveMqEndpointConfigurationProperties> bean = getProps(context);
+            return bean.isPresent() && bean.get().getJmxUrl().size() > 0;
+        }
+    }
+
+    public static class BrokerNameNotEmptyCondition extends ActiveMqEndpointConfigurationPropertiesCondition {
+
+        @Override
+        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            Optional<ActiveMqEndpointConfigurationProperties> bean = getProps(context);
+            return bean.isPresent() && StringUtils.isNotEmpty(bean.get().getBrokerName());
         }
     }
 

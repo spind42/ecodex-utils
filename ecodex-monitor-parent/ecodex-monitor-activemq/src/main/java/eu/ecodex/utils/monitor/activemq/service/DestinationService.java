@@ -5,6 +5,8 @@ import org.apache.activemq.broker.jmx.DestinationViewMBean;
 import org.apache.activemq.broker.jmx.QueueViewMBean;
 import org.apache.activemq.broker.jmx.TopicViewMBean;
 import org.apache.activemq.web.BrokerFacade;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
@@ -16,15 +18,21 @@ import java.util.stream.Collectors;
 
 public class DestinationService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DestinationService.class);
+
     @Autowired
     BrokerFacade activeMqBrokerFacade;
 
     List<DestinationViewMBean> destinations = new ArrayList<>();
 
     @PostConstruct
-    public void init() throws Exception {
-        destinations.addAll(activeMqBrokerFacade.getQueues());
-        destinations.addAll(activeMqBrokerFacade.getTopics());
+    public void init() {
+        try {
+            destinations.addAll(activeMqBrokerFacade.getQueues());
+            destinations.addAll(activeMqBrokerFacade.getTopics());
+        } catch (Exception e) {
+            LOGGER.error("Error while getting destinations from brokerFacade. ActiveMQ Broker Monitoring will not work!", e);
+        }
     }
 
 
@@ -66,3 +74,4 @@ public class DestinationService {
     }
 
 }
+

@@ -15,7 +15,11 @@ public class ActiveMqEndpointConfigurationProperties {
 
     private boolean enabled = false;
 
+    private boolean localJmx = true;
+
     private List<JMXServiceURL> jmxUrl = new ArrayList<>();
+
+    private String brokerName;
 
     private String jmxUser;
 

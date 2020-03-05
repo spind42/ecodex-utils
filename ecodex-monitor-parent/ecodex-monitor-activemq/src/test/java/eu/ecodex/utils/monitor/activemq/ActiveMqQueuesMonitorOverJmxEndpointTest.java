@@ -30,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         "monitor.activemq.jmx-password=admin",
 })
 @ActiveProfiles({"test", "dev"})
+@Disabled
 class ActiveMqQueuesMonitorOverJmxEndpointTest {
 
     public static final String USERNAME = "admin";

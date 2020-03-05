@@ -2,8 +2,11 @@ package eu.ecodex.utils.monitor.app;
 
 import eu.ecodex.utils.spring.starter.SpringBootWarOnTomcatStarter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration;
 
-@SpringBootApplication
+@SpringBootApplication(
+        exclude = { ActiveMQAutoConfiguration.class}
+)
 public class ActiveMqMonitorAppStarter extends SpringBootWarOnTomcatStarter {
 
     public static void main(String... args) {
