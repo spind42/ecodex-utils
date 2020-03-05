@@ -44,6 +44,10 @@
             <id>${ecodex-snapshots-repo.id}</id>
             <url>${ecodex-snapshots-repo.url}</url>
         </snapshotRepository>
+        <site>
+            <id>ecodexutils</id>
+            <url>https://www.ecodex.eu/ecodexutils</url>
+        </site>
     </distributionManagement>
 
     <build>
