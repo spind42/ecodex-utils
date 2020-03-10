@@ -15,7 +15,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>eu.ecodex.connector.utils</groupId>
+            <groupId>eu.ecodex.utils</groupId>
             <artifactId>spring-tomcat-war-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -32,7 +32,7 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.ecodex.connector.utils</groupId>
+            <groupId>eu.ecodex.utils</groupId>
             <artifactId>spring-property-configuration-validator</artifactId>
             <version>${project.version}</version>
         </dependency>

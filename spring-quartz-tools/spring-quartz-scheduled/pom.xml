@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>spring-quartz-tools</artifactId>
-        <groupId>eu.ecodex.connector.utils</groupId>
+        <groupId>eu.ecodex.utils</groupId>
         <version>0.0.11-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>eu.ecodex.connector.utils</groupId>
+    <groupId>eu.ecodex.utils</groupId>
     <artifactId>spring-quartz-scheduled</artifactId>
 
     <description>This project provides a Bean processor which replaces the org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor of spring
@@ -53,7 +53,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>eu.ecodex.connector.utils</groupId>
+            <groupId>eu.ecodex.utils</groupId>
             <artifactId>logging-tester</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

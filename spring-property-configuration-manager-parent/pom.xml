@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ecodex-utils-parent</artifactId>
-        <groupId>eu.ecodex.connector.utils</groupId>
+        <groupId>eu.ecodex.utils</groupId>
         <version>0.0.11-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <description>Parent project of multiple libraries which will assist on ConfigurationProperty management within an spring boot application</description>
 
-    <groupId>eu.ecodex.connector.utils</groupId>
+    <groupId>eu.ecodex.utils</groupId>
     <artifactId>spring-property-configuration-manager-parent</artifactId>
     <packaging>pom</packaging>
     <modules>
@@ -27,7 +27,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>eu.ecodex.connector.utils</groupId>
+                <groupId>eu.ecodex.utils</groupId>
                 <artifactId>ecodex-dependencies</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
