@@ -1,42 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>ecodex-utils-parent</artifactId>
-        <groupId>eu.ecodex.utils</groupId>
-        <version>0.0.11-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-
-    <description>Parent project of multiple libraries which will assist on ConfigurationProperty management within an spring boot application</description>
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
     <groupId>eu.ecodex.utils</groupId>
-    <artifactId>spring-property-configuration-manager-parent</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>spring-property-configuration-manager-api</module>
-        <module>spring-property-configuration-manager</module>
-        <module>spring-property-example-configuration-manager-ui</module>
-        <module>spring-property-configuration-manager-vaadin-ui</module>
-        <module>spring-property-configuration-processor</module>
-        <module>spring-property-configuration-validator</module>
-        <module>spring-property-configuration-common</module>
-    </modules>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>eu.ecodex.utils</groupId>
-                <artifactId>ecodex-dependencies</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-
-
-
+    <artifactId>ecodex-utils-parent</artifactId>
+    <version>0.0.13-RELEASE</version>
+  </parent>
+  <groupId>eu.ecodex.utils</groupId>
+  <artifactId>spring-property-configuration-manager-parent</artifactId>
+  <packaging>pom</packaging>
+  <description>Parent project of multiple libraries which will assist on ConfigurationProperty management within an spring boot application</description>
+  <modules>
+    <module>spring-property-configuration-manager-api</module>
+    <module>spring-property-configuration-manager</module>
+    <module>spring-property-example-configuration-manager-ui</module>
+    <module>spring-property-configuration-manager-vaadin-ui</module>
+    <module>spring-property-configuration-processor</module>
+    <module>spring-property-configuration-validator</module>
+    <module>spring-property-configuration-common</module>
+  </modules>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>eu.ecodex.utils</groupId>
+        <artifactId>ecodex-dependencies</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>
