@@ -14,7 +14,7 @@ public interface ConfigurationPropertyChecker {
      * @param basePackageFilter - the filter under which all with with @see {@link org.springframework.boot.context.properties.ConfigurationProperties}
      *                          annotated Properties are bound and checked within this binding
      * @throws org.springframework.boot.context.properties.bind.BindException in case of an failure during binding
-     * @return
+     * @return - a list of validation errors
      */
     List<ValidationErrors> validateConfiguration(ConfigurationPropertySource configurationPropertySource, String... basePackageFilter);
 
