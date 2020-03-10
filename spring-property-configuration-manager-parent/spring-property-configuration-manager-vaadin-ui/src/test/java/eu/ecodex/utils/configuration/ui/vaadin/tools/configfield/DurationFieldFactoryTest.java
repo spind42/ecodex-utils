@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest(classes = DurationFieldFactoryTest.TestContext.class)
-class DurationFieldFactoryTest {
+public class DurationFieldFactoryTest {
 
     @SpringBootApplication(scanBasePackages = {"eu.ecodex.utils.configuration.ui.vaadin.tools", "eu.ecodex.configuration.spring"})
     public static class TestContext {
