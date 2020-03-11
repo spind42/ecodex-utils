@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>eu.ecodex.utils</groupId>
+    <artifactId>ecodex-utils-parent</artifactId>
+    <version>0.0.13-RELEASE</version>
+  </parent>
+  <groupId>eu.ecodex.utils.monitor</groupId>
+  <artifactId>ecodex-monitor-parent</artifactId>
+  <packaging>pom</packaging>
+  <description>This project can be deployed as a war and will expose certificate states and activeMq queues over the spring actuator interface.
+    This will make monitoring of certificate and queue states in the e-Codex components easier.</description>
+  <modules>
+    <module>ecodex-monitor-app</module>
+    <module>ecodex-monitor-certificates</module>
+    <module>ecodex-monitor-activemq</module>
+  </modules>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>eu.ecodex.utils</groupId>
+        <artifactId>ecodex-dependencies</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.1</version>
+          <configuration>
+            <compilerArgs>
+              <arg>-parameters</arg>
+            </compilerArgs>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>

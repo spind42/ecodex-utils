@@ -90,11 +90,10 @@ public class ConfigurationPropertyCheckerImpl implements ConfigurationPropertyCh
 
 
     /**
+     * {@inheritDoc}
+     *
      * Tests if the configuration is valid, all properties are loaded from the
      * provided configuration source
-     *  @param configurationPropertySource - the propertySources
-     * @param basePackageFilter           - is only scanning with @ConfigurationProperties annotated classes under the specified package
-     * @return
      */
     public List<ValidationErrors> validateConfiguration(ConfigurationPropertySource configurationPropertySource, List<String> basePackageFilter) {
         LOGGER.debug("#isConfigurationValid for packages: [{}]", basePackageFilter);

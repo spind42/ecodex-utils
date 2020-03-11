@@ -8,10 +8,12 @@ import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import eu.ecodex.utils.configuration.domain.ConfigurationPropertyNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -20,6 +22,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Validator;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Function;
@@ -155,10 +158,15 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
 
     private void processPropertyClazz(List<ConfigurationProperty> configList, ConfigurationPropertyNode parent, Class<?> configurationClass) {
         Field[] fields = configurationClass.getDeclaredFields(); //TODO: also scan inherited fields...
-//        Field[] fields = configurationClass.getFields();
-        
 
         Stream.of(fields)
+                .filter(field -> {
+                    PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(configurationClass, field.getName());
+                    if (propertyDescriptor != null) {
+                        return propertyDescriptor.getReadMethod() != null && propertyDescriptor.getWriteMethod() != null;
+                    }
+                    return false;
+                })
                 .forEach( field -> this.processFieldOfBean(configList, parent, configurationClass, field));
     }
 
@@ -192,7 +200,16 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
                 String label = (String) AnnotationUtils.getValue(configLabelAnnotation);
                 c.setLabel(label);
             }
+
+            DefaultValue defaultValueAnnotation = AnnotationUtils.getAnnotation(field, DefaultValue.class);
+            if (defaultValueAnnotation != null) {
+                c.setDefaultValue(defaultValueAnnotation.value());
+            }
+
             c.setType(field.getType());
+
+
+
         }
 
     }

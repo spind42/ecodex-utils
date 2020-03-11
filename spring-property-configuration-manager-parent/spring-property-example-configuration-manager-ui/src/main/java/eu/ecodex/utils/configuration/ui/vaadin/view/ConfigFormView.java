@@ -1,7 +1,6 @@
 package eu.ecodex.utils.configuration.ui.vaadin.view;
 
 import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -9,7 +8,8 @@ import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import eu.ecodex.utils.configuration.example1.Example1ConfigurationProperties;
-import eu.ecodex.utils.configuration.ui.vaadin.tools.ConfigurationFormFactory;
+import eu.ecodex.utils.configuration.ui.vaadin.tools.ConfigurationFormsFactory;
+import eu.ecodex.utils.configuration.ui.vaadin.tools.configforms.ConfigurationFormsFactoryImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +28,11 @@ public class ConfigFormView extends VerticalLayout {
     private static final Logger LOGGER = LogManager.getLogger(ConfigFormView.class);
 
     @Autowired
-    ConfigurationFormFactory configurationFormFactory;
+    ConfigurationFormsFactory configurationFormFactory;
 
-//    @Autowired
     Button button = new Button("Check");
 
-    ConfigurationFormFactory.ConfigurationPropertyForm formFromConfigurationPropertiesClass;
+    ConfigurationFormsFactoryImpl.ConfigurationPropertyForm formFromConfigurationPropertiesClass;
 
     public ConfigFormView() {
 

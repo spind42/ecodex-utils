@@ -1,26 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>spring-quartz-tools</artifactId>
-        <groupId>eu.ecodex.connector.utils</groupId>
-        <version>0.0.10-RELEASE</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>eu.ecodex.connector.utils</groupId>
-    <artifactId>spring-quartz-monitor</artifactId>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-quartz</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>spring-quartz-scheduled</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>eu.ecodex.utils</groupId>
+    <artifactId>spring-quartz-tools</artifactId>
+    <version>0.0.13-RELEASE</version>
+  </parent>
+  <groupId>eu.ecodex.utils</groupId>
+  <artifactId>spring-quartz-monitor</artifactId>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-quartz</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>spring-quartz-scheduled</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 </project>

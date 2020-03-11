@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="eCodexUtils">
+
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.8</version>
+    </skin>
+    <custom>
+        <fluidoSkin>
+            <topBarEnabled>true</topBarEnabled>
+            <sideBarEnabled>false</sideBarEnabled>
+        </fluidoSkin>
+    </custom>
+    <body>
+        <links>
+            <item name="E-Codex Project" href="https://www.e-codex.eu/"/>
+        </links>
+
+        <breadcrumbs>
+            <item name="ECodexUtils" href="./index.html" />
+        </breadcrumbs>
+
+        <menu name="eCodex Utils">
+            <item name="Overview" href="index.html"/>
+            <item name="Introduction" href="introduction.html"/>
+        </menu>
+
+        <menu ref="reports"/>
+
+
+        <footer></footer> <!-- empty footer -->
+
+    </body>
+</project>

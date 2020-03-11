@@ -1,4 +1,4 @@
-package eu.ecodex.utils.configuration.ui.vaadin.tools;
+package eu.ecodex.utils.configuration.ui.vaadin.tools.configforms;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
@@ -9,41 +9,29 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.*;
-import com.vaadin.flow.data.converter.Converter;
-import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
-import eu.ecodex.utils.configuration.ui.vaadin.tools.configfield.DefaultTextFieldFactory;
+import eu.ecodex.utils.configuration.ui.vaadin.tools.ConfigurationFieldFactory;
+import eu.ecodex.utils.configuration.ui.vaadin.tools.ConfigurationFormsFactory;
+import eu.ecodex.utils.configuration.ui.vaadin.tools.UiConfigurationConversationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.stereotype.Service;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ElementKind;
-import javax.validation.Path;
-import javax.validation.metadata.ConstraintDescriptor;
-import java.lang.annotation.ElementType;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
-@Service
-//@UIScope
-public class ConfigurationFormFactory {
+@org.springframework.stereotype.Component
+public class ConfigurationFormsFactoryImpl implements ConfigurationFormsFactory {
 
-    private static final Logger LOGGER = LogManager.getLogger(ConfigurationFormFactory.class);
+    private static final Logger LOGGER = LogManager.getLogger(ConfigurationFormsFactoryImpl.class);
 
     @Autowired
     ConfigurationPropertyCollector configurationPropertyCollector;
@@ -145,7 +133,7 @@ public class ConfigurationFormFactory {
             field = configurationFieldFactory.createField(prop, binder);
             return field;
         } else {
-            throw new RuntimeException("No Field Factory found for property " + prop);
+            throw new RuntimeException(String.format("No Field Factory found for property %s with type [%s]", prop, prop.getType()));
             //Just create a simple text field...
 //            field = createField(prop, binder);
         }

@@ -49,9 +49,8 @@ public class QuartzScheduledJobTest {
         assertThat(triggerAndJobDefinitionList).hasSize(2);
     }
 
-    /**
+    /*
      * Ensure that the beans are scheduled
-     * @throws InterruptedException
      */
     @Test
     public void testJobsRunning() throws InterruptedException {

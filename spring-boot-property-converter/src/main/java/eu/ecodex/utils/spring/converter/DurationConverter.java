@@ -11,6 +11,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Converts from a String to Duration
+ * by using the following pattern: {@literal ^(?<number>\d+)(?<unit>(ms)|([s,m,h,d]))$}
+ *
+ */
 public class DurationConverter implements Converter<String, Duration> {
 
 

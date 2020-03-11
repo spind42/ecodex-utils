@@ -2,16 +2,18 @@ package eu.ecodex.utils.configuration.ui.vaadin.tools.views;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.binder.*;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
+import com.vaadin.flow.shared.Registration;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyChecker;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
-import eu.ecodex.utils.configuration.ui.vaadin.tools.ConfigurationFormFactory;
+import eu.ecodex.utils.configuration.ui.vaadin.tools.ConfigurationFormsFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,6 @@ import org.springframework.boot.context.properties.source.ConfigurationPropertyS
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
-import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @org.springframework.stereotype.Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -48,7 +47,7 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
     ConfigurationPropertyChecker configurationPropertyChecker;
 
     @Autowired
-    ConfigurationFormFactory configurationFormFactory;
+    ConfigurationFormsFactory configurationFormFactory;
 
     Properties properties = new Properties();
 
@@ -57,6 +56,8 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
     Binder<Properties> binder = new Binder();
 
     private Collection<ConfigurationProperty> configurationProperties = new ArrayList<>();
+    private Collection<AbstractField> propertyFields = new ArrayList<>();
+    private boolean readOnly = false;
 
     public ListConfigurationPropertiesComponent() {
     }
@@ -73,7 +74,7 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
             @Override
             public Component apply(ConfigurationProperty configurationProperty) {
                 AbstractField field = configurationFormFactory.createField(configurationProperty, binder);
-
+                propertyFields.add(field);
                 return field;
             }
         });
@@ -91,7 +92,6 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
 
         //TODO: add validation error field before ListView
 
-        this.setSizeFull();
         this.add(this.grid);
         this.add(this.statusLabel);
     }
@@ -144,7 +144,7 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
 
     }
 
-    public void validate() {
+    public List<ValidationResult> validate() {
 
         BinderValidationStatus<Properties> validate = this.binder.validate();
         List<ValidationResult> beanValidationErrors = validate.getBeanValidationErrors();
@@ -153,5 +153,11 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
                 .map(error -> error.getErrorMessage())
                 .collect(Collectors.joining("\n\n"));
         this.statusLabel.setText(collect);
+        return beanValidationErrors;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+        propertyFields.stream().forEach(f -> f.setReadOnly(readOnly));
     }
 }
