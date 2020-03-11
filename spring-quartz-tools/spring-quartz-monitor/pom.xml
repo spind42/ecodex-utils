@@ -4,7 +4,7 @@
   <parent>
     <groupId>eu.ecodex.utils</groupId>
     <artifactId>spring-quartz-tools</artifactId>
-    <version>0.0.13-RELEASE</version>
+    <version>0.0.14-SNAPSHOT</version>
   </parent>
   <groupId>eu.ecodex.utils</groupId>
   <artifactId>spring-quartz-monitor</artifactId>
