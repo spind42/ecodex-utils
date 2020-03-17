@@ -183,6 +183,11 @@
         <artifactId>spring-property-configuration-manager-vaadin-ui</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>eu.ecodex.utils</groupId>
+        <artifactId>spring-tomcat-war-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <!-- maven plugins -->
       <dependency>
         <groupId>org.owasp</groupId>
