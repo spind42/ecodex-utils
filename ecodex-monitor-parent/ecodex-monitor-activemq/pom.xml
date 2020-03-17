@@ -4,7 +4,7 @@
   <parent>
     <groupId>eu.ecodex.utils.monitor</groupId>
     <artifactId>ecodex-monitor-parent</artifactId>
-    <version>0.0.13-RELEASE</version>
+    <version>0.0.14-RELEASE</version>
   </parent>
   <groupId>eu.ecodex.utils.monitor</groupId>
   <artifactId>ecodex-monitor-activemq</artifactId>
