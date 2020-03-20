@@ -7,15 +7,11 @@ import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfigura
 @SpringBootApplication(
         exclude = { ActiveMQAutoConfiguration.class}
 )
-public class ActiveMqMonitorAppStarter extends SpringBootWarOnTomcatStarter {
-
-    public static void main(String... args) {
-        SpringBootWarOnTomcatStarter springBootWarOnTomcatStarter = new ActiveMqMonitorAppStarter();
-        springBootWarOnTomcatStarter.run(args);
-    }
+public class MonitorAppConfiguration extends SpringBootWarOnTomcatStarter {
 
     @Override
     protected Class<?>[] getSources() {
-        return new Class<?>[] {ActiveMqMonitorAppStarter.class};
+        return new Class<?>[] {MonitorAppConfiguration.class};
     }
+
 }

@@ -13,6 +13,7 @@
     <module>spring-quartz-tools</module>
     <module>spring-boot-property-converter</module>
     <module>ecodex-monitor-parent</module>
+    <module>ecodex-configuration-utils</module>
   </modules>
   <scm>
     <connection>scm:git:https://secure.ecodex.eu/gitblit/ecodex-utils.git</connection>
