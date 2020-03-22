@@ -1,9 +1,11 @@
 package eu.ecodex.utils.monitor.gw.service;
 
 import eu.ecodex.utils.monitor.gw.config.GatewayMonitorConfigurationProperties;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 
+@Disabled("unfinished")
 public class ConfiguredGatewaysTest {
 
     ConfiguredGatewaysService configuredGateways;

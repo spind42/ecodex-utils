@@ -3,10 +3,12 @@ package eu.ecodex.utils.monitor.gw.service;
 import eu.ecodex.configuration.pmode.Configuration;
 import eu.ecodex.utils.monitor.gw.config.GatewayRestInterfaceConfiguration;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Disabled("tests needs external resources")
 public class PModeDownloaderTest {
 
     PModeDownloader pModeDownloader;

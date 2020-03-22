@@ -49,24 +49,16 @@ public class PModeDownloader {
     public ConfigurationWrapper downloadNewPModes(int id) {
         String lineSeperator = "\n\n####################";
 
-        ResponseEntity<String> currentPMode = restTemplate.getForEntity("/rest/pmode/current", String.class);
-        String body = currentPMode.getBody();
-        //gateway returns json with leading )]}, so replace it with nothing
-        body = body.replaceFirst("\\)]}',", "");
+        ResponseEntity<PModeArchiveInfoDTO> currentPMode = restTemplate.getForEntity("/ext/pmode/current", PModeArchiveInfoDTO.class);
 
         int pmodeId = -1;
-        LOGGER.debug("Retrieved json [{}]", body);
-        try {
-            ObjectMapper mapper = new ObjectMapper()
-                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            PModeArchiveInfoDTO pModeArchiveInfoDTO = mapper.readValue(body, PModeArchiveInfoDTO.class);
-            pmodeId = pModeArchiveInfoDTO.getId();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        LOGGER.debug("Retrieved json [{}]", currentPMode);
+
+        pmodeId = currentPMode.getBody().getId();
+
         if (pmodeId > id) {
             ResponseEntity<String> forEntity = restTemplate
-                    .getForEntity("/rest/pmode/" + pmodeId , String.class);
+                    .getForEntity("/ext/pmode/" + pmodeId , String.class);
 
             String xmlString = forEntity.getBody();
 

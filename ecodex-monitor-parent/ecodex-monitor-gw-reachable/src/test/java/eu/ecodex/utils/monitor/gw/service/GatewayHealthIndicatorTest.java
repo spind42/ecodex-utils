@@ -2,6 +2,7 @@ package eu.ecodex.utils.monitor.gw.service;
 
 import eu.ecodex.utils.monitor.app.MonitorAppConfiguration;
 import eu.ecodex.utils.monitor.gw.GatewayMonitorAutoConfiguration;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
         classes = { GatewayMonitorAutoConfiguration.class, MonitorAppConfiguration.class }
         )
 @ActiveProfiles("test")
+@Disabled("test needs external resource!")
 public class GatewayHealthIndicatorTest {
 
     @Autowired
@@ -45,6 +47,8 @@ public class GatewayHealthIndicatorTest {
         ResponseEntity<String> forEntity = build.getForEntity("/", String.class);
 
         assertThat(forEntity).isNotNull();
+
+        System.out.println(forEntity.getBody());
     }
 
 

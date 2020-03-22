@@ -6,6 +6,8 @@ import eu.ecodex.utils.monitor.gw.domain.AccessPointsConfiguration;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.time.Duration;
+
 @ConfigurationProperties(prefix = GatewayMonitorConfigurationProperties.GATEWAY_MONITOR_PREFIX)
 @Data
 public class GatewayMonitorConfigurationProperties {
@@ -31,5 +33,10 @@ public class GatewayMonitorConfigurationProperties {
     private TLSConnectionProperties tls = new TLSConnectionProperties();
 
     private HealthCheckProperties healthCheck = new HealthCheckProperties();
+
+    /**
+     * How long should the last check result be cached?
+     */
+    private Duration checkCache = Duration.ofMinutes(5);
 
 }

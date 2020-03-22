@@ -8,9 +8,11 @@ import eu.ecodex.utils.monitor.gw.domain.AccessPointsConfiguration;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.Optional;
 
 import static eu.ecodex.utils.monitor.gw.config.GatewayMonitorConfigurationProperties.GATEWAY_MONITOR_PREFIX;
 
@@ -57,6 +59,26 @@ public class ConfiguredGatewaysService {
 
     public synchronized AccessPoint getSelf() {
         return this.accesPointConfig.getSelf();
+    }
+
+    /**
+     *
+     * @param name the accesspoint name
+     * @return the accesspoint with the name or null if none found
+     */
+    public synchronized AccessPoint getByName(String name) {
+        if (StringUtils.isEmpty(name)) {
+            throw new IllegalArgumentException("Name is not allowed to be empty!");
+        }
+        if (name.equals(this.accesPointConfig.getSelf().getName())) {
+            return this.accesPointConfig.getSelf();
+        }
+        Optional<AccessPoint> first = this.accesPointConfig.getRemoteAccessPoints()
+                .stream()
+                .filter(ap -> name.equals(ap.getName()))
+                .findFirst();
+
+        return first.orElse(null);
     }
 
 
