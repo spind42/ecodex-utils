@@ -37,6 +37,6 @@ public class GatewayMonitorConfigurationProperties {
     /**
      * How long should the last check result be cached?
      */
-    private Duration checkCache = Duration.ofMinutes(5);
+    private Duration checkCacheTimeout = Duration.ofMinutes(5);
 
 }

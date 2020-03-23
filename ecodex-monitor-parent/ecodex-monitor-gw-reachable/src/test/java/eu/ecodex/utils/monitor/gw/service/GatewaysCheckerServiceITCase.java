@@ -16,6 +16,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test.server.ServerStarter;
 
+import java.time.Duration;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -78,6 +80,30 @@ public class GatewaysCheckerServiceITCase {
         LOGGER.info("Gateway status is: [{}]", gatewayStatus);
 
         assertThat(gatewayStatus.getFailures()).hasSize(0);
+    }
+
+    @Test
+    void getGatewayStatus_recheck() throws InterruptedException {
+
+        ConfigurableApplicationContext SERVER3 = ServerStarter.startServer3();
+
+        AccessPoint ap = new AccessPoint();
+        ap.setName("gw3");
+        ap.setEndpoint("https://localhost:" + ServerStarter.getServerPort(SERVER3) + "/");
+
+        AccessPointStatusDTO gatewayStatus = gatewaysCheckerService.getGatewayStatus(ap);
+
+        LOGGER.info("Gateway status is: [{}]", gatewayStatus);
+
+        assertThat(gatewayStatus.getFailures()).hasSize(0);
+
+        AccessPointStatusDTO gatewayStatus2 = gatewaysCheckerService.getGatewayStatus(ap);
+
+        LOGGER.info("Gateway status is: [{}]", gatewayStatus2);
+
+        Thread.sleep(Duration.ofSeconds(5).toMillis());
+
+        assertThat(gatewayStatus).isNotSameAs(gatewayStatus2);
     }
 
     @Test
