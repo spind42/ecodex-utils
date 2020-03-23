@@ -17,11 +17,8 @@ public class ConfiguredGatewaysTest {
 
     }
 
-
-
     @Test
-    public void testInit() {
-        configuredGateways.init();
+    public void testUpdate() {
     }
 
 }

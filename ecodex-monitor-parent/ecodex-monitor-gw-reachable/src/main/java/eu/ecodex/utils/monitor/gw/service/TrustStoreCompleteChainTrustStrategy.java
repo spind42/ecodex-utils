@@ -52,11 +52,11 @@ public class TrustStoreCompleteChainTrustStrategy implements TrustStrategy {
      * @param client is the client X509Certificate
      * @param keyStore containing all trusted certificate
      * @return true if validation until root certificate success, false otherwise
-     * @throws KeyStoreException
-     * @throws CertificateException
-     * @throws InvalidAlgorithmParameterException
-     * @throws NoSuchAlgorithmException
-     * @throws NoSuchProviderException
+     * @throws KeyStoreException if the provided key store cannot be open
+     * @throws CertificateException {@link #validateKeyChain(X509Certificate, X509Certificate...)}
+     * @throws InvalidAlgorithmParameterException {@link #validateKeyChain(X509Certificate, X509Certificate...)}
+     * @throws NoSuchAlgorithmException {@link #validateKeyChain(X509Certificate, X509Certificate...)}
+     * @throws NoSuchProviderException {@link #validateKeyChain(X509Certificate, X509Certificate...)}
      */
     public boolean validateKeyChain(X509Certificate client,
                                            KeyStore keyStore) throws KeyStoreException, CertificateException,
@@ -79,10 +79,10 @@ public class TrustStoreCompleteChainTrustStrategy implements TrustStrategy {
      * @param client is the client X509Certificate
      * @param trustedCerts is Array containing all trusted X509Certificate
      * @return true if validation until root certificate success, false otherwise
-     * @throws CertificateException
-     * @throws InvalidAlgorithmParameterException
-     * @throws NoSuchAlgorithmException
-     * @throws NoSuchProviderException
+     * @throws CertificateException thrown if the certificate is invalid
+     * @throws InvalidAlgorithmParameterException @see {@link CertPathValidator#validate(CertPath, CertPathParameters)}
+     * @throws NoSuchAlgorithmException @see {@link CertPathValidator#validate(CertPath, CertPathParameters)}
+     * @throws NoSuchProviderException @see {@link CertPathValidator#validate(CertPath, CertPathParameters)}
      */
     public boolean validateKeyChain(X509Certificate client, X509Certificate... trustedCerts) throws CertificateException,
             InvalidAlgorithmParameterException, NoSuchAlgorithmException,
@@ -132,9 +132,9 @@ public class TrustStoreCompleteChainTrustStrategy implements TrustStrategy {
      *
      * @param cert is X509Certificate that will be tested
      * @return true if cert is self signed, false otherwise
-     * @throws CertificateException
-     * @throws NoSuchAlgorithmException
-     * @throws NoSuchProviderException
+     * @throws CertificateException if the certificate is invalid
+     * @throws NoSuchAlgorithmException @see {@link X509Certificate#verify(PublicKey)}
+     * @throws NoSuchProviderException @see {@link X509Certificate#verify(PublicKey)}
      */
     public boolean isSelfSigned(X509Certificate cert)
             throws CertificateException, NoSuchAlgorithmException,

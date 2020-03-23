@@ -3,10 +3,7 @@ package eu.ecodex.utils.monitor.gw;
 
 import eu.ecodex.utils.monitor.gw.config.GatewayMonitorConfigurationProperties;
 import eu.ecodex.utils.monitor.gw.config.GatewayRestInterfaceConfiguration;
-import eu.ecodex.utils.monitor.gw.service.ConfiguredGatewaysService;
-import eu.ecodex.utils.monitor.gw.service.GatewayHealthIndicator;
-import eu.ecodex.utils.monitor.gw.service.PModeDownloader;
-import eu.ecodex.utils.monitor.gw.service.ServiceConfiguration;
+import eu.ecodex.utils.monitor.gw.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,6 +34,11 @@ public class GatewayMonitorAutoConfiguration {
     @Bean
     public GatewayHealthIndicator gatewayHealthIndicator() {
         return new GatewayHealthIndicator();
+    }
+
+    @Bean
+    public GatewayReachableEndpoint gatewayReachableEndpoint() {
+        return new GatewayReachableEndpoint();
     }
 
 }

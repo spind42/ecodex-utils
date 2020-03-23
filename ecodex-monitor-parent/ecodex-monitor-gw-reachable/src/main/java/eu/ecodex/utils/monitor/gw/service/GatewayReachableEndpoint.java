@@ -25,7 +25,7 @@ public class GatewayReachableEndpoint {
     List<AccessPointStatusDTO> accessPointStatusList() {
         ArrayList<AccessPointStatusDTO> apStatus = new ArrayList<>();
         return configuredGatewaysService
-                .getConfiguredGateways()
+                .getConfiguredGatewaysWithSelf()
                 .stream()
                 .map(ap -> checkerService.getGatewayStatus(ap))
                 .collect(Collectors.toList());

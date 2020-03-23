@@ -4,6 +4,7 @@ import eu.ecodex.utils.monitor.gw.config.GatewayMonitorConfigurationProperties;
 import eu.ecodex.utils.monitor.gw.domain.AccessPoint;
 import eu.ecodex.utils.monitor.gw.dto.AccessPointStatusDTO;
 import eu.ecodex.utils.monitor.gw.dto.CheckResultDTO;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -106,8 +107,22 @@ public class GatewaysCheckerService {
         }
 
         TLS[] allowedTls;
+        ProtocolVersion[] supportedClientProtos =
+                Stream.of(sslcontext.getSupportedSSLParameters().getProtocols())
+                .map(s -> {
+                    try {
+                        return TLS.parse(s);
+                    } catch (ParseException e) {
+                        return null;
+                    }
+                })
+                .filter(p -> p != null)
+                .toArray(ProtocolVersion[]::new);
+        LOGGER.debug("Supported client protocols are [{}]", supportedClientProtos);
+
+        ProtocolVersion minTls;
         try {
-            final ProtocolVersion minTls = TLS.parse(minTlsString);
+            minTls = TLS.parse(minTlsString);
 
             allowedTls = Stream.of(TLS.values())
                     .filter(tls -> tls.greaterEquals(minTls))
@@ -117,14 +132,24 @@ public class GatewaysCheckerService {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
-        status.setAllowedTls(Stream.of(allowedTls).map(t -> t.version).toArray(ProtocolVersion[]::new));
+        status.setAllowedTls(Stream.of(allowedTls)
+                .map(t -> t.version)
+                .filter(p -> ArrayUtils.contains(supportedClientProtos, p))
+                .toArray(ProtocolVersion[]::new));
+        LOGGER.trace("allowed TLS protocols are [{}]", status.getAllowedTls());
+
+        if (status.getAllowedTls().length == 0) {
+            CheckResultDTO f = new CheckResultDTO();
+            f.setMessage("Client does not support minTls!");
+            status.getFailures().add(f);
+            LOGGER.warn("Client supports TLS portocols [{}] but required minTls [{}] is not part of it!", supportedClientProtos, minTls);
+        }
 
         DefaultHostnameVerifier defaultHostnameVerifier = new DefaultHostnameVerifier();
 
-
         final SSLConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactoryBuilder.create()
                 .setSslContext(sslcontext)
-                .setTlsVersions(allowedTls)
+                .setTlsVersions(Stream.of(status.getAllowedTls()).map(p -> p.getProtocol()).toArray(String[]::new))
                 .setHostnameVerifier(defaultHostnameVerifier)
                 .build();
 
@@ -173,10 +198,13 @@ public class GatewaysCheckerService {
                     status.setUsedTls(TLS.parse(sslSession.getProtocol()));
                     status.setLocalCertificates(convertToBase64StringArray(sslSession.getLocalCertificates()));
                     status.setServerCertificates(convertToBase64StringArray(sslSession.getPeerCertificates()));
-
+                } else {
+                    LOGGER.info("SSL session is null, cannot provide any information!");
                 }
+                status.setProxyHost(clientContext.getHttpRoute().getProxyHost());
+                status.setTargetHost(clientContext.getHttpRoute().getTargetHost());
             }
-        } catch (IOException | ParseException | URISyntaxException e) {
+        } catch (IOException | ParseException | URISyntaxException | IllegalArgumentException e) {
             CheckResultDTO f = new CheckResultDTO();
             f.setName("Connection Failure");
             f.setMessage("Connection failed");

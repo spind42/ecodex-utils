@@ -2,6 +2,7 @@ package eu.ecodex.utils.monitor.gw.dto;
 
 import lombok.Data;
 import lombok.ToString;
+import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.ProtocolVersion;
 import org.apache.hc.core5.http.ssl.TLS;
 
@@ -39,5 +40,9 @@ public class AccessPointStatusDTO {
     List<CheckResultDTO> warnings = new ArrayList<>();
 
     ZonedDateTime checkTime;
+
+    HttpHost proxyHost;
+
+    HttpHost targetHost;
 
 }

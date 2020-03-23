@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static eu.ecodex.utils.monitor.gw.config.GatewayMonitorConfigurationProperties.GATEWAY_MONITOR_PREFIX;
@@ -32,13 +34,7 @@ public class ConfiguredGatewaysService {
         this.monitorConfigurationProperties = monitorConfigurationProperties;
     }
 
-    @PostConstruct
-    public void init() {
-        updateConfiguredGateways();
-    }
-
     public synchronized void updateConfiguredGateways() {
-        this.accesPointConfig = null;
         if (monitorConfigurationProperties.getRest().isLoadPmodes()) {
             this.accesPointConfig = pModeDownloader.updateAccessPointsConfig(accesPointConfig);
             LOGGER.info("Loaded configured access points from gateway p-Modes");
@@ -54,10 +50,20 @@ public class ConfiguredGatewaysService {
     }
 
     public synchronized Collection<AccessPoint> getConfiguredGateways() {
+        updateConfiguredGateways();
         return this.accesPointConfig.getRemoteAccessPoints();
     }
 
+    public synchronized Collection<AccessPoint> getConfiguredGatewaysWithSelf() {
+        updateConfiguredGateways();
+        List<AccessPoint> list = new ArrayList<>();
+        list.add(getSelf());
+        list.addAll(this.accesPointConfig.getRemoteAccessPoints());
+        return list;
+    }
+
     public synchronized AccessPoint getSelf() {
+        updateConfiguredGateways();
         return this.accesPointConfig.getSelf();
     }
 
@@ -67,6 +73,7 @@ public class ConfiguredGatewaysService {
      * @return the accesspoint with the name or null if none found
      */
     public synchronized AccessPoint getByName(String name) {
+        updateConfiguredGateways();
         if (StringUtils.isEmpty(name)) {
             throw new IllegalArgumentException("Name is not allowed to be empty!");
         }

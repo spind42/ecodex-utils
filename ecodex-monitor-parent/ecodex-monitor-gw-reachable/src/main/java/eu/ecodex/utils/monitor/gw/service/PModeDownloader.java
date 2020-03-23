@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -86,7 +87,10 @@ public class PModeDownloader {
         return this.wrappedConfiguration;
     }
 
-    public AccessPointsConfiguration updateAccessPointsConfig(AccessPointsConfiguration config) {
+    public AccessPointsConfiguration updateAccessPointsConfig(@NotNull AccessPointsConfiguration config) {
+        if (config == null) {
+            throw new IllegalArgumentException("Config is not allowed to be null!");
+        }
         ConfigurationWrapper wrappedConfiguration = this.downloadNewPModes(config.getId());
         Configuration conf = wrappedConfiguration.config;
         String selfParty = conf.getParty();
