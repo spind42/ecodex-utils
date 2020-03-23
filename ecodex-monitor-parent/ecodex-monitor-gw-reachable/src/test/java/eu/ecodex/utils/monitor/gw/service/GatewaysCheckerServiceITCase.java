@@ -92,18 +92,16 @@ public class GatewaysCheckerServiceITCase {
         ap.setEndpoint("https://localhost:" + ServerStarter.getServerPort(SERVER3) + "/");
 
         AccessPointStatusDTO gatewayStatus = gatewaysCheckerService.getGatewayStatus(ap);
-
         LOGGER.info("Gateway status is: [{}]", gatewayStatus);
-
         assertThat(gatewayStatus.getFailures()).hasSize(0);
 
+
+        Thread.sleep(Duration.ofSeconds(8).toMillis());
         AccessPointStatusDTO gatewayStatus2 = gatewaysCheckerService.getGatewayStatus(ap);
-
         LOGGER.info("Gateway status is: [{}]", gatewayStatus2);
-
-        Thread.sleep(Duration.ofSeconds(5).toMillis());
-
         assertThat(gatewayStatus).isNotSameAs(gatewayStatus2);
+
+
     }
 
     @Test
