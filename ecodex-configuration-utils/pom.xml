@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>ecodex-utils-parent</artifactId>
-        <groupId>eu.ecodex.utils</groupId>
-        <version>0.0.16-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>ecodex-configuration-utils</artifactId>
-    <modules>
-        <module>pmode-utils</module>
-    </modules>
-    <groupId>eu.ecodex.configuration</groupId>
-    <packaging>pom</packaging>
-
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>eu.ecodex.utils</groupId>
+    <artifactId>ecodex-utils-parent</artifactId>
+    <version>0.0.16-RELEASE</version>
+  </parent>
+  <groupId>eu.ecodex.configuration</groupId>
+  <artifactId>ecodex-configuration-utils</artifactId>
+  <packaging>pom</packaging>
+  <modules>
+    <module>pmode-utils</module>
+  </modules>
 </project>
