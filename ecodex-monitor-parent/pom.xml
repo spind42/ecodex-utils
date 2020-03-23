@@ -4,7 +4,7 @@
   <parent>
     <groupId>eu.ecodex.utils</groupId>
     <artifactId>ecodex-utils-parent</artifactId>
-    <version>0.0.15-RELEASE</version>
+    <version>0.0.16-SNAPSHOT</version>
   </parent>
   <groupId>eu.ecodex.utils.monitor</groupId>
   <artifactId>ecodex-monitor-parent</artifactId>
@@ -15,6 +15,8 @@
     <module>ecodex-monitor-app</module>
     <module>ecodex-monitor-certificates</module>
     <module>ecodex-monitor-activemq</module>
+    <module>ecodex-monitor-gw-reachable</module>
+    <module>ecodex-monitor-common</module>
   </modules>
   <dependencyManagement>
     <dependencies>

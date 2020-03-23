@@ -4,7 +4,7 @@
   <parent>
     <groupId>eu.ecodex.utils.monitor</groupId>
     <artifactId>ecodex-monitor-parent</artifactId>
-    <version>0.0.15-RELEASE</version>
+    <version>0.0.16-SNAPSHOT</version>
   </parent>
   <groupId>eu.ecodex.utils.monitor</groupId>
   <artifactId>ecodex-monitor-app</artifactId>
@@ -53,20 +53,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>spring-boot-starter-logging</artifactId>
-          <groupId>org.springframework.boot</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-    </dependency>
-    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>ecodex-monitor-certificates</artifactId>
       <version>${project.version}</version>
@@ -79,12 +65,22 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>ecodex-monitor-gw-reachable</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>ecodex-monitor-activemq</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-log4j2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>ecodex-monitor-common</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
   <build>

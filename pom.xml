@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>eu.ecodex.utils</groupId>
   <artifactId>ecodex-utils-parent</artifactId>
-  <version>0.0.15-RELEASE</version>
+  <version>0.0.16-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <module>spring-tomcat-war-starter</module>
@@ -14,6 +14,7 @@
     <module>spring-boot-property-converter</module>
     <module>ecodex-monitor-parent</module>
     <module>vaadin-utils-parent</module>
+    <module>ecodex-configuration-utils</module>
   </modules>
   <scm>
     <connection>scm:git:https://secure.ecodex.eu/gitblit/ecodex-utils.git</connection>
