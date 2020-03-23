@@ -64,20 +64,18 @@ public class GatewaysCheckerService {
 
     public AccessPointStatusDTO getGatewayStatus(AccessPoint ap, Duration cacheTimeout) {
         AccessPointStatusDTO status = apCheck.get(ap);
-        if (status == null) {
-            LOGGER.trace("Checking [{}] the first time", ap);
-            status = new AccessPointStatusDTO();
-            status.setEndpoint(ap.getEndpoint());
-            status.setName(ap.getName());
-            status.setCheckTime(ZonedDateTime.now());
-            apCheck.put(ap, status);
-        } else if (status.getCheckTime().plus(cacheTimeout).isBefore(ZonedDateTime.now())) {
-            LOGGER.trace("Checking [{}] and hitting [{}] cache last check was on [{}]", ap, cacheTimeout, status.getCheckTime());
+        if (status != null && status.getCheckTime().plus(cacheTimeout).isAfter(ZonedDateTime.now()) ) {
+            LOGGER.trace("Checking [{}] and hitting [{}] + [{}] cache last check was on [{}]", ap, ZonedDateTime.now(), cacheTimeout, status.getCheckTime());
             return status;
         }
-
-
         LOGGER.info("Checking endpoint [{}]", ap);
+        status = new AccessPointStatusDTO();
+        status.setCheckTime(ZonedDateTime.now());
+        status.setEndpoint(ap.getEndpoint());
+        status.setName(ap.getName());
+        apCheck.put(ap, status);
+
+
 
         char[] privateKeyPassword = gatewayMonitorConfig.getTls().getPrivateKey().getPassword().toCharArray();
         KeyStore keyStore = gatewayMonitorConfig.getTls().getKeyStore().loadKeyStore();

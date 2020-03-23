@@ -51,7 +51,7 @@ public class GatewaysCheckerServiceITCase {
     }
 
     @Test
-    void getGatewayStatus2() {
+    void getGatewayStatus2_illegalClientCrt() {
 
         ConfigurableApplicationContext SERVER2 = ServerStarter.startServer2();
 
@@ -63,7 +63,7 @@ public class GatewaysCheckerServiceITCase {
 
         LOGGER.info("Gateway status is: [{}]", gatewayStatus);
 
-        assertThat(gatewayStatus.getFailures()).hasSize(0);
+        assertThat(gatewayStatus.getFailures()).hasSize(1);
     }
 
     @Test
@@ -95,17 +95,18 @@ public class GatewaysCheckerServiceITCase {
         LOGGER.info("Gateway status is: [{}]", gatewayStatus);
         assertThat(gatewayStatus.getFailures()).hasSize(0);
 
-
+        LOGGER.info("sleep 8s");
         Thread.sleep(Duration.ofSeconds(8).toMillis());
+
         AccessPointStatusDTO gatewayStatus2 = gatewaysCheckerService.getGatewayStatus(ap);
         LOGGER.info("Gateway status is: [{}]", gatewayStatus2);
-        assertThat(gatewayStatus).isNotSameAs(gatewayStatus2);
+        assertThat(gatewayStatus).isNotEqualTo(gatewayStatus2);
 
 
     }
 
     @Test
-    void getGatewayStatus4_illegalServerCrt() {
+    void getGatewayStatus4_illegalServerCrt() throws InterruptedException {
 
         ConfigurableApplicationContext SERVER4 = ServerStarter.startServer4();
 
@@ -114,14 +115,16 @@ public class GatewaysCheckerServiceITCase {
         ap.setEndpoint("https://localhost:" + ServerStarter.getServerPort(SERVER4) + "/");
 
         AccessPointStatusDTO gatewayStatus = gatewaysCheckerService.getGatewayStatus(ap);
-
         AccessPointStatusDTO gatewayStatus1 = gatewaysCheckerService.getGatewayStatus(ap);
+        Thread.sleep(Duration.ofSeconds(2).toMillis());
+        AccessPointStatusDTO gatewayStatus2 = gatewaysCheckerService.getGatewayStatus(ap);
 
         LOGGER.info("Gateway status is: [{}]", gatewayStatus);
 
         assertThat(gatewayStatus.getFailures()).hasSize(1);
 
         assertThat(gatewayStatus).isSameAs(gatewayStatus1);
+        assertThat(gatewayStatus).isSameAs(gatewayStatus2);
     }
 
 
