@@ -224,6 +224,11 @@
         <version>1.7.3</version>
         <type>maven-plugin</type>
       </dependency>
+      <dependency>
+        <groupId>eu.ecodex.utils</groupId>
+        <artifactId>spring-property-configuration-validator</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>
