@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>eu.ecodex.utils</groupId>
   <artifactId>ecodex-utils-parent</artifactId>
-  <version>0.0.16-RELEASE</version>
+  <version>0.0.17-RELEASE</version>
   <packaging>pom</packaging>
   <modules>
     <module>spring-tomcat-war-starter</module>
@@ -175,7 +175,6 @@
     </plugins>
   </reporting>
   <profiles>
-
     <profile>
       <!-- Profile that extends the printable version number by an optional build.
                 It is activated when an environment variable called BUILD_NUMBER exists (as in Jenkins) -->
@@ -185,9 +184,6 @@
           <name>env.BUILD_NUMBER</name>
         </property>
       </activation>
-      <properties>
-        <build.information>version: ${project.version} build: #${env.BUILD_NUMBER} (${maven.build.timestamp}, branch ${scmBranch}, commit ${buildNumber})</build.information>
-      </properties>
       <build>
         <plugins>
           <plugin>
@@ -214,6 +210,9 @@
           </plugin>
         </plugins>
       </build>
+      <properties>
+        <build.information>version: ${project.version} build: #${env.BUILD_NUMBER} (${maven.build.timestamp}, branch ${scmBranch}, commit ${buildNumber})</build.information>
+      </properties>
     </profile>
   </profiles>
 </project>
