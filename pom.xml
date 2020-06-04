@@ -39,8 +39,8 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <build.information>version: ${project.version} (${maven.build.timestamp}, branch: ${scmBranch}, commit: ${buildNumber})</build.information>
-    <build.number>${buildNumber}</build.number>
+    <build.information>version: ${project.version} (${maven.build.timestamp}, commit: ${buildNumber})</build.information>
+    <build.number>null</build.number>
     <build.version>${project.version}</build.version>
     <build.time>${maven.build.timestamp}</build.time>
   </properties>
@@ -143,28 +143,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>1.4</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <!-- Get the scm revision once for all modules -->
-          <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
-          <!-- Don't fail on modified local resources -->
-          <doCheck>false</doCheck>
-          <!-- Don't update SCM -->
-          <doUpdate>false</doUpdate>
-          <!-- Use short version of git revision -->
-          <shortRevisionLength>7</shortRevisionLength>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
   <reporting>
@@ -197,6 +175,7 @@
     </plugins>
   </reporting>
   <profiles>
+
     <profile>
       <!-- Profile that extends the printable version number by an optional build.
                 It is activated when an environment variable called BUILD_NUMBER exists (as in Jenkins) -->
@@ -209,6 +188,32 @@
       <properties>
         <build.information>version: ${project.version} build: #${env.BUILD_NUMBER} (${maven.build.timestamp}, branch ${scmBranch}, commit ${buildNumber})</build.information>
       </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>buildnumber-maven-plugin</artifactId>
+            <version>1.4</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>create</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <!-- Get the scm revision once for all modules -->
+              <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+              <!-- Don't fail on modified local resources -->
+              <doCheck>false</doCheck>
+              <!-- Don't update SCM -->
+              <doUpdate>false</doUpdate>
+              <!-- Use short version of git revision -->
+              <shortRevisionLength>7</shortRevisionLength>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
