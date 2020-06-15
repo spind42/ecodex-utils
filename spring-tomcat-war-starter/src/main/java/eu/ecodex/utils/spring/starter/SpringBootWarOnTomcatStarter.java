@@ -67,7 +67,7 @@ public abstract class SpringBootWarOnTomcatStarter extends SpringBootServletInit
             LOGGER.info("CatalinHome is set - adding [{}] to spring.config.location", catalinaPathConf);
             springConfigLocations.add(catalinaPathConf);
 
-            String catalinaPathConfig = String.format("file:%s/conf/%s/", catalinaHomePath.toAbsolutePath(), getApplicationConfigLocationName());
+            String catalinaPathConfig = String.format("file:%s/config/%s/", catalinaHomePath.toAbsolutePath(), getApplicationConfigLocationName());
             LOGGER.info("CatalinHome is set - adding [{}] to spring.config.location", catalinaPathConfig);
             springConfigLocations.add(catalinaPathConfig);
         }
