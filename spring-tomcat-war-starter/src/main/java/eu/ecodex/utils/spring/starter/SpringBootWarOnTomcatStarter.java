@@ -62,10 +62,14 @@ public abstract class SpringBootWarOnTomcatStarter extends SpringBootServletInit
         springConfigLocations.add("classpath:/config/");
         springConfigLocations.add(String.format("classpath:/config/%s/", getApplicationConfigLocationName())); //look at relative directory config/<context>
         if (resolveCatalinaHome() != null) {
-            Path configPath = resolveCatalinaHome();
-            String catalinaPath = String.format("file:%s/conf/%s/", configPath.toAbsolutePath(), getApplicationConfigLocationName());
-            LOGGER.info("CatalinHome is set - adding [{}] to spring.config.location", catalinaPath);
-            springConfigLocations.add(catalinaPath);
+            Path catalinaHomePath = resolveCatalinaHome();
+            String catalinaPathConf = String.format("file:%s/conf/%s/", catalinaHomePath.toAbsolutePath(), getApplicationConfigLocationName());
+            LOGGER.info("CatalinHome is set - adding [{}] to spring.config.location", catalinaPathConf);
+            springConfigLocations.add(catalinaPathConf);
+
+            String catalinaPathConfig = String.format("file:%s/config/%s/", catalinaHomePath.toAbsolutePath(), getApplicationConfigLocationName());
+            LOGGER.info("CatalinHome is set - adding [{}] to spring.config.location", catalinaPathConfig);
+            springConfigLocations.add(catalinaPathConfig);
         }
 
         if (System.getProperty("spring.config.location") == null) {
