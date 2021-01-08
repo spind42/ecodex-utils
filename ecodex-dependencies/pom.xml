@@ -11,10 +11,10 @@
   <description>This project contains a useful set of dependencies and can be imported as a pom and will help to manage e-Codex dependencies</description>
   <properties>
     <swagger.version>2.9.2</swagger.version>
-    <spring.boot.version>2.2.3.RELEASE</spring.boot.version>
-    <spring.cloud.version>2.1.5.RELEASE</spring.cloud.version>
-    <cxf.version>3.3.4</cxf.version>
-    <vaadin.version>14.1.4</vaadin.version>
+    <org.apache.cxf.version>3.3.9</org.apache.cxf.version>
+    <spring.cloud.version>2.2.6.RELEASE</spring.cloud.version>
+    <spring.boot.version>2.3.7.RELEASE</spring.boot.version>
+    <org.junit.jupiter.version>5.6.3</org.junit.jupiter.version>
     <org.junit.jupiter.version>5.5.2</org.junit.jupiter.version>
   </properties>
   <dependencyManagement>
