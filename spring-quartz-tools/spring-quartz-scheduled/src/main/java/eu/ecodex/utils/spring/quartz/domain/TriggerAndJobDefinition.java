@@ -1,20 +1,21 @@
 package eu.ecodex.utils.spring.quartz.domain;
 
+import eu.ecodex.utils.spring.quartz.annotation.QuartzScheduled;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.scheduling.annotation.Scheduled;
+
 
 import java.lang.reflect.Method;
 
 public class TriggerAndJobDefinition {
 
     private final String beanName;
-    Scheduled scheduled;
+    QuartzScheduled quartzScheduled;
     Method method;
     Object bean;
 
-    public TriggerAndJobDefinition(String beanName, Scheduled scheduled, Method method, Object bean) {
+    public TriggerAndJobDefinition(String beanName, QuartzScheduled quartzScheduled, Method method, Object bean) {
         this.beanName = beanName;
-        this.scheduled = scheduled;
+        this.quartzScheduled = quartzScheduled;
         this.method = method;
         this.bean = bean;
     }
@@ -23,12 +24,12 @@ public class TriggerAndJobDefinition {
         return beanName;
     }
 
-    public Scheduled getScheduled() {
-        return scheduled;
+    public QuartzScheduled getScheduled() {
+        return quartzScheduled;
     }
 
-    public void setScheduled(Scheduled scheduled) {
-        this.scheduled = scheduled;
+    public void setScheduled(QuartzScheduled quartzScheduled) {
+        this.quartzScheduled = quartzScheduled;
     }
 
     public Method getMethod() {

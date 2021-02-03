@@ -1,33 +1,24 @@
 package eu.ecodex.utils.spring.quartz.configuration;
 
+import eu.ecodex.utils.spring.quartz.annotation.QuartzScheduled;
+import eu.ecodex.utils.spring.quartz.annotation.QuartzSchedules;
 import eu.ecodex.utils.spring.quartz.domain.TriggerAndJobDefinition;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.*;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
-import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcessor;
-import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.EmbeddedValueResolverAware;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.MethodIntrospector;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.scheduling.annotation.Schedules;
-import org.springframework.scheduling.config.ScheduledTask;
-import org.springframework.scheduling.config.ScheduledTaskHolder;
-import org.springframework.util.StringValueResolver;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -39,7 +30,8 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import static eu.ecodex.utils.spring.quartz.configuration.ScheduledWithQuartzConfiguration.TRIGGER_AND_JOB_DEFINITION_LIST_BEAN_NAME;
 
-public class ScheduledBeanPostProcessor implements MergedBeanDefinitionPostProcessor, DestructionAwareBeanPostProcessor, Ordered, EmbeddedValueResolverAware, BeanNameAware, BeanFactoryAware, ApplicationContextAware, SmartInitializingSingleton, ApplicationListener<ContextRefreshedEvent>, DisposableBean {
+
+public class ScheduledBeanPostProcessor implements DestructionAwareBeanPostProcessor, BeanFactoryAware, ApplicationContextAware {
 
     private static final Logger LOGGER = LogManager.getLogger(ScheduledBeanPostProcessor.class);
 
@@ -59,28 +51,9 @@ public class ScheduledBeanPostProcessor implements MergedBeanDefinitionPostProce
         this.beanFactory = beanFactory;
     }
 
-    @Override
-    public void setBeanName(String s) {
-
-    }
-
-    @Override
-    public void destroy() throws Exception {
-
-    }
-
-    @Override
-    public void afterSingletonsInstantiated() {
-
-    }
 
     @Override
     public void postProcessBeforeDestruction(Object o, String s) throws BeansException {
-
-    }
-
-    @Override
-    public void postProcessMergedBeanDefinition(RootBeanDefinition rootBeanDefinition, Class<?> aClass, String s) {
 
     }
 
@@ -90,23 +63,8 @@ public class ScheduledBeanPostProcessor implements MergedBeanDefinitionPostProce
         if (this.beanFactory == null) {
             this.beanFactory = applicationContext;
         }
-    }
-
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
 
     }
-
-    @Override
-    public void setEmbeddedValueResolver(StringValueResolver stringValueResolver) {
-
-    }
-
-    @Override
-    public int getOrder() {
-        return 0;
-    }
-
 
 
     @Override
@@ -119,11 +77,11 @@ public class ScheduledBeanPostProcessor implements MergedBeanDefinitionPostProce
 
         Class<?> targetClass = AopProxyUtils.ultimateTargetClass(bean);
         if (!this.nonAnnotatedClasses.contains(targetClass)) {
-            Map<Method, Set<Scheduled>> annotatedMethods = MethodIntrospector.selectMethods(targetClass,
-                    (MethodIntrospector.MetadataLookup<Set<Scheduled>>) method -> {
-                        Set<Scheduled> scheduledMethods = AnnotatedElementUtils.getMergedRepeatableAnnotations(
-                                method, Scheduled.class, Schedules.class);
-                        return (!scheduledMethods.isEmpty() ? scheduledMethods : null);
+            Map<Method, Set<QuartzScheduled>> annotatedMethods = MethodIntrospector.selectMethods(targetClass,
+                    (MethodIntrospector.MetadataLookup<Set<QuartzScheduled>>) method -> {
+                        Set<QuartzScheduled> quartzScheduledMethods = AnnotatedElementUtils.getMergedRepeatableAnnotations(
+                                method, QuartzScheduled.class, QuartzSchedules.class);
+                        return (!quartzScheduledMethods.isEmpty() ? quartzScheduledMethods : null);
                     });
             if (annotatedMethods.isEmpty()) {
                 this.nonAnnotatedClasses.add(targetClass);
@@ -134,7 +92,7 @@ public class ScheduledBeanPostProcessor implements MergedBeanDefinitionPostProce
             else {
                 // Non-empty set of methods
                 annotatedMethods.forEach((method, scheduledMethods) ->
-                        scheduledMethods.forEach(scheduled -> processScheduled(beanName, scheduled, method, bean)));
+                        scheduledMethods.forEach(quartzScheduled -> processScheduled(beanName, quartzScheduled, method, bean)));
                 if (LOGGER.isTraceEnabled()) {
                     LOGGER.trace(annotatedMethods.size() + " @Scheduled methods processed on bean '" + beanName +
                             "': " + annotatedMethods);
@@ -144,18 +102,11 @@ public class ScheduledBeanPostProcessor implements MergedBeanDefinitionPostProce
         return bean;
     }
 
-    private void processScheduled(String beanName, Scheduled scheduled, Method method, Object bean) {
-        //TODO: create quartz based CronJob Bean and register it...
-//        String cron = scheduled.cron();
-        this.triggerAndJobDefinitionList.add(new TriggerAndJobDefinition(beanName, scheduled, method, bean));
+    private void processScheduled(String beanName, QuartzScheduled quartzScheduled, Method method, Object bean) {
+        TriggerAndJobDefinition definition = new TriggerAndJobDefinition(beanName, quartzScheduled, method, bean);
+        LOGGER.debug("Adding definition [{}]", definition);
+        triggerAndJobDefinitionList.add(definition);
     }
 
-//    @Override
-//    public Set<ScheduledTask> getScheduledTasks() {
-//        return null;
-//    }
-
-//    public class ScheduledAnnotationBeanPostProcessor implements ScheduledTaskHolder, MergedBeanDefinitionPostProcessor, DestructionAwareBeanPostProcessor, Ordered, EmbeddedValueResolverAware, BeanNameAware, BeanFactoryAware, ApplicationContextAware, SmartInitializingSingleton, ApplicationListener<ContextRefreshedEvent>, DisposableBean {
-//    }
 
 }
