@@ -10,7 +10,7 @@
   <artifactId>spring-quartz-tools</artifactId>
   <packaging>pom</packaging>
   <modules>
-    <module>spring-quartz-quartzScheduled</module>
+    <module>spring-quartz-scheduled</module>
     <module>spring-quartz-monitor</module>
   </modules>
   <dependencyManagement>
