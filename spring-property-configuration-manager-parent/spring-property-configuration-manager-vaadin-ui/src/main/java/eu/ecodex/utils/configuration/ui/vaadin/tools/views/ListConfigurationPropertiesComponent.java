@@ -25,10 +25,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.validation.FieldError;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -49,11 +46,11 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
     @Autowired
     ConfigurationFormsFactory configurationFormFactory;
 
-    Properties properties = new Properties();
+    Map<String, String> properties = new HashMap<>();
 
     Label statusLabel = new Label();
 
-    Binder<Properties> binder = new Binder();
+    Binder<Map<String, String>> binder = new Binder();
 
     private Collection<ConfigurationProperty> configurationProperties = new ArrayList<>();
     private Collection<AbstractField> propertyFields = new ArrayList<>();
@@ -96,11 +93,11 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
         this.add(this.statusLabel);
     }
 
-    public Binder<Properties> getBinder() {
+    public Binder<Map<String, String>> getBinder() {
         return binder;
     }
 
-    public void setBinder(Binder<Properties> binder) {
+    public void setBinder(Binder<Map<String, String>> binder) {
         this.binder = binder;
     }
 
@@ -118,9 +115,9 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
                 .distinct()
                 .collect(Collectors.toList());
 
-        binder.withValidator(new Validator<Properties>() {
+        binder.withValidator(new Validator<Map<String, String>>() {
             @Override
-            public ValidationResult apply(Properties value, ValueContext context) {
+            public ValidationResult apply(Map<String, String> value, ValueContext context) {
                 ConfigurationPropertySource configSource = new MapConfigurationPropertySource(value);
                 List<ValidationErrors> validationErrors = configurationPropertyChecker.validateConfiguration(configSource, configClasses);
                 if (validationErrors.isEmpty()) {
@@ -146,7 +143,7 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
 
     public List<ValidationResult> validate() {
 
-        BinderValidationStatus<Properties> validate = this.binder.validate();
+        BinderValidationStatus<Map<String, String>> validate = this.binder.validate();
         List<ValidationResult> beanValidationErrors = validate.getBeanValidationErrors();
         LOGGER.trace("BeanValidationErrors: [{}]", beanValidationErrors);
         String collect = beanValidationErrors.stream()

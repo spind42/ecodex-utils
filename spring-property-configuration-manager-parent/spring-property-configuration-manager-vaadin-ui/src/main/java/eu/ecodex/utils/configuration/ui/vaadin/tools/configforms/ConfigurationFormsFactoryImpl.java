@@ -54,7 +54,7 @@ public class ConfigurationFormsFactoryImpl implements ConfigurationFormsFactory 
         Collection<ConfigurationProperty> configurationPropertyFromClazz = configurationPropertyCollector.getConfigurationPropertyFromClazz(clazz);
 
 //        BeanValidationBinder binder = new BeanValidationBinder(clazz);
-        Binder<Properties> binder = new Binder<>(Properties.class);
+        Binder<Map<String, String>> binder = new Binder<>();
 
 //        binder.withValidator(new Validator<Properties>() {
 //
@@ -87,7 +87,7 @@ public class ConfigurationFormsFactoryImpl implements ConfigurationFormsFactory 
 //            formLayout.addFormItem(c);
         });
 
-        formLayout.setValue(new Properties()); //setting empty properties...
+        formLayout.setValue(new HashMap<>()); //setting empty properties...
 //        try {
 //            formLayout.setValue(clazz.getDeclaredConstructor().newInstance());
 //        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
@@ -97,7 +97,7 @@ public class ConfigurationFormsFactoryImpl implements ConfigurationFormsFactory 
         return formLayout;
     }
 
-    public Component createComponentFromConfigurationProperty(ConfigurationProperty prop, Binder<Properties> binder) {
+    public Component createComponentFromConfigurationProperty(ConfigurationProperty prop, Binder<Map<String, String>> binder) {
         HorizontalLayout horizontalLayout = new HorizontalLayout();
 
         AbstractField field = createField(prop, binder);
@@ -122,7 +122,7 @@ public class ConfigurationFormsFactoryImpl implements ConfigurationFormsFactory 
         return horizontalLayout;
     }
 
-    public AbstractField createField(final ConfigurationProperty prop, final Binder<Properties> binder) {
+    public AbstractField createField(final ConfigurationProperty prop, final Binder<Map<String, String>> binder) {
         Optional<ConfigurationFieldFactory> ff = fieldCreatorFactories
                 .stream()
                 .filter(configurationFieldFactory -> configurationFieldFactory.canHandle(prop.getType()))
@@ -191,21 +191,21 @@ public class ConfigurationFormsFactoryImpl implements ConfigurationFormsFactory 
 //    }
 
 
-    public class ConfigurationPropertyForm extends FormLayout implements HasValue<HasValue.ValueChangeEvent<Properties>, Properties> {
+    public class ConfigurationPropertyForm extends FormLayout implements HasValue<HasValue.ValueChangeEvent<Map<String, String>>, Map<String, String>> {
 
         private Label formStatusLabel = new Label();
 
         /**
          * The by the factory generated binder
          */
-        private final Binder<Properties> binder;
+        private final Binder<Map<String, String>> binder;
         /**
          * The specific type of the with @ConfigurationProperties
          * annotated class
          */
         private final Class clazz;
         private boolean readOnly;
-        private Properties properties;
+        private Map<String, String> properties;
 //        private Object value;
 
         private ConfigurationPropertyForm(Class clazz, Binder binder) {
@@ -256,13 +256,13 @@ public class ConfigurationFormsFactoryImpl implements ConfigurationFormsFactory 
 //        }
 
         @Override
-        public void setValue(Properties value) {
+        public void setValue(Map<String, String> value) {
             this.properties = value;
             this.binder.setBean(value);
         }
 
         @Override
-        public Properties getValue() {
+        public Map<String, String> getValue() {
             return this.binder.getBean();
         }
 

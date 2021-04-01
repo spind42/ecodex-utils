@@ -8,10 +8,12 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 
+import java.util.Map;
+
 public interface ConfigurationFieldFactory {
 
     boolean canHandle(Class clazz);
 
-    public AbstractField createField(ConfigurationProperty configurationProperty, Binder binder);
+    public AbstractField createField(ConfigurationProperty configurationProperty, Binder<Map<String, String>> binder);
 
 }

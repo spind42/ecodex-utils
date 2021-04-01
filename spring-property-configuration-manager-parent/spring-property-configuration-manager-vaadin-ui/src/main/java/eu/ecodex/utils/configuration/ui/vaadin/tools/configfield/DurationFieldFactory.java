@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.ConstraintViolation;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,12 +38,12 @@ public class DurationFieldFactory implements ConfigurationFieldFactory {
     }
 
     @Override
-    public AbstractField createField(ConfigurationProperty configurationProperty, Binder binder) {
+    public AbstractField createField(ConfigurationProperty configurationProperty, Binder<Map<String, String>> binder) {
         TextField tf = new TextField();
 
         Class parentClass = configurationProperty.getParentClass();
 
-        Binder.BindingBuilder<Properties, String> propertiesStringBindingBuilder = binder.forField(tf);
+        Binder.BindingBuilder<Map<String, String>, String> propertiesStringBindingBuilder = binder.forField(tf);
         if (parentClass != null) {
             //can currently only add a validator if the parent class is known and has Bean Validation
             propertiesStringBindingBuilder = propertiesStringBindingBuilder.withValidator(new Validator<String>() {
@@ -73,9 +74,9 @@ public class DurationFieldFactory implements ConfigurationFieldFactory {
 
         propertiesStringBindingBuilder.withNullRepresentation("");
 
-        Binder.Binding<Properties, String> binding = propertiesStringBindingBuilder.bind(
-                (ValueProvider<Properties, String>) o -> o.getProperty(configurationProperty.getPropertyName(), null),
-                (Setter<Properties, String>) (props, value) -> {
+        Binder.Binding<Map<String, String>, String> binding = propertiesStringBindingBuilder.bind(
+                (ValueProvider<Map<String, String>, String>) o -> o.getOrDefault(configurationProperty.getPropertyName(), null),
+                (Setter<Map<String, String>, String>) (props, value) -> {
                     if (value == null) {
                         props.remove(configurationProperty.getPropertyName());
                     } else {
