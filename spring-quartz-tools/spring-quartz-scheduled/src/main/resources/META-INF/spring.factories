@@ -1,4 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   eu.ecodex.utils.spring.quartz.configuration.ScheduledWithQuartzConfiguration
-
-#    eu.domibus.connector.client.link.ws.configuration.WsLinkAutoConfiguration

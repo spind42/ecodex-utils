@@ -92,7 +92,7 @@ class ConfigurationPropertyCollectorImplTest {
         assertThat(configurationPropertiesHirachie).isNotNull();
 
         Optional<ConfigurationPropertyNode> childCom = configurationPropertiesHirachie.getChild("com");
-        assertThat(childCom).as("Ther must be a child com").isNotEmpty();
+        assertThat(childCom).as("There must be a child com").isNotEmpty();
         Optional<ConfigurationPropertyNode> comExample = childCom.get().getChild("example");
         assertThat(comExample).as("Node com.example must exist").isNotEmpty();
         Optional<ConfigurationPropertyNode> comExampleDc = comExample.get().getChild("dc");

@@ -2,6 +2,7 @@ package eu.ecodex.utils.configuration.ui.vaadin.tools.views;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasValidation;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class ListConfigurationPropertiesComponent extends VerticalLayout {
+public class ListConfigurationPropertiesComponent extends VerticalLayout implements HasValue<HasValue.ValueChangeEvent<Collection<ConfigurationProperty>>, Collection<ConfigurationProperty>>, HasValidator<Collection<ConfigurationProperty>> {
 
     private static final Logger LOGGER = LogManager.getLogger(ListConfigurationPropertiesComponent.class);
 
@@ -153,8 +154,55 @@ public class ListConfigurationPropertiesComponent extends VerticalLayout {
         return beanValidationErrors;
     }
 
+    public static class ConfigurationPropertiesListValidator implements Validator<Collection<ConfigurationProperty>> {
+
+        @Override
+        public ValidationResult apply(Collection<ConfigurationProperty> value, ValueContext context) {
+
+            return null;
+        }
+    }
+
+
+    public Validator<Collection<ConfigurationProperty>> getDefaultValidator() {
+
+        return Validator.alwaysPass();
+    }
+
+
+    @Override
+    public void setValue(Collection<ConfigurationProperty> value) {
+        setConfigurationProperties(value);
+    }
+
+    @Override
+    public Collection<ConfigurationProperty> getValue() {
+        return getConfigurationProperties();
+    }
+
+
+    @Override
+    public Registration addValueChangeListener(ValueChangeListener<? super ValueChangeEvent<Collection<ConfigurationProperty>>> listener) {
+        return null;
+    }
+
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
         propertyFields.stream().forEach(f -> f.setReadOnly(readOnly));
+    }
+
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+
+    }
+
+    @Override
+    public boolean isRequiredIndicatorVisible() {
+        return false;
     }
 }

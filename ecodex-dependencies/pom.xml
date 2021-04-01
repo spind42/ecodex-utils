@@ -4,7 +4,7 @@
   <parent>
     <groupId>eu.ecodex.utils</groupId>
     <artifactId>ecodex-utils-parent</artifactId>
-    <version>0.0.18-RELEASE</version>
+    <version>0.0.20-RELEASE</version>
   </parent>
   <!--    <groupId>eu.ecodex.utils</groupId>-->
   <artifactId>ecodex-dependencies</artifactId>
@@ -16,6 +16,7 @@
     <spring.boot.version>2.3.7.RELEASE</spring.boot.version>
     <org.junit.jupiter.version>5.6.3</org.junit.jupiter.version>
     <org.junit.jupiter.version>5.5.2</org.junit.jupiter.version>
+    <vaadin.version>14.4.7</vaadin.version>
   </properties>
   <dependencyManagement>
     <dependencies>

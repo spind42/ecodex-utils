@@ -27,9 +27,12 @@ import static eu.ecodex.utils.spring.quartz.testbeans.ScheduledBean.SCHEDULED_CR
 import static eu.ecodex.utils.spring.quartz.testbeans.ScheduledBean.SCHEDULED_FIXED_RATE_JOB_STRING;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(properties = "debug=true")
+@SpringBootTest(properties = {"debug=true",
+        "test.cron-string=* * * * * ?",
+        "test.interval=1s"
+})
 @ActiveProfiles("test")
-public class QuartzScheduledJobTest {
+public class QuartzQuartzScheduledJobTest {
 
     static ConfigurableApplicationContext APP_CONTEXT;
 

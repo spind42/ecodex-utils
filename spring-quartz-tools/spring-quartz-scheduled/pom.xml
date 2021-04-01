@@ -4,10 +4,10 @@
   <parent>
     <groupId>eu.ecodex.utils</groupId>
     <artifactId>spring-quartz-tools</artifactId>
-    <version>0.0.18-RELEASE</version>
+    <version>0.0.20-RELEASE</version>
   </parent>
   <groupId>eu.ecodex.utils</groupId>
-  <artifactId>spring-quartz-scheduled</artifactId>
+  <artifactId>spring-quartz-quartzScheduled</artifactId>
   <description>This project provides a Bean processor which replaces the org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor of spring
         and makes it possible to use the @org.springframework.scheduling.annotation.Scheduled with quartz</description>
   <dependencies>

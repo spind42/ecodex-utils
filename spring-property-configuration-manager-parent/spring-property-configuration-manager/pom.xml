@@ -4,7 +4,7 @@
   <parent>
     <groupId>eu.ecodex.utils</groupId>
     <artifactId>spring-property-configuration-manager-parent</artifactId>
-    <version>0.0.18-RELEASE</version>
+    <version>0.0.20-RELEASE</version>
   </parent>
   <groupId>eu.ecodex.utils</groupId>
   <artifactId>spring-property-configuration-manager</artifactId>
@@ -63,7 +63,6 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.10</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
