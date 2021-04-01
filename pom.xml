@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>eu.ecodex.utils</groupId>
   <artifactId>ecodex-utils-parent</artifactId>
-  <version>0.0.20-RELEASE</version>
+  <version>0.0.x-DEV-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <module>spring-tomcat-war-starter</module>
