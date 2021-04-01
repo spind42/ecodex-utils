@@ -4,7 +4,7 @@
   <parent>
     <groupId>eu.ecodex.vaadin-utils</groupId>
     <artifactId>vaadin-utils-parent</artifactId>
-    <version>0.0.x-DEV-SNAPSHOT</version>
+    <version>0.0.21-SNAPSHOT</version>
   </parent>
   <artifactId>vaadin-basic-layout</artifactId>
   <description>This module holds common vaadin components and layouts for ecodex related web applications</description>
