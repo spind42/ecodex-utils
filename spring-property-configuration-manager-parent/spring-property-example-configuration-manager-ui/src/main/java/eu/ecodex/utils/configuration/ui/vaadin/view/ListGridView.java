@@ -17,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.PostConstruct;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -39,9 +41,9 @@ public class ListGridView extends VerticalLayout {
     @Autowired
     ConfigurationPropertyCollector configurationPropertyCollector;
 
-    Properties properties = new Properties();
+    Map<String, String> properties = new HashMap<>();
 
-    Binder<Properties> binder = new Binder();
+//    Binder<Map<String, String>> binder = new Binder();
 
 //    Button validate;
     Button saveProperties;

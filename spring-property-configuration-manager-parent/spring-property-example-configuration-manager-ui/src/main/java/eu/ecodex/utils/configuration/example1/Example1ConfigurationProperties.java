@@ -55,6 +55,9 @@ public class Example1ConfigurationProperties {
     @NestedConfigurationProperty
     NestedProperty subsetting = new NestedProperty();
 
+    @NestedConfigurationProperty
+    NestedBasePropertyInherited subset2 = new NestedBasePropertyInherited();
+
     public NestedProperty getSubsetting() {
         return subsetting;
     }
@@ -117,5 +120,13 @@ public class Example1ConfigurationProperties {
 
     public void setPassword2(String password2) {
         this.password2 = password2;
+    }
+
+    public NestedBasePropertyInherited getSubset2() {
+        return subset2;
+    }
+
+    public void setSubset2(NestedBasePropertyInherited subset2) {
+        this.subset2 = subset2;
     }
 }

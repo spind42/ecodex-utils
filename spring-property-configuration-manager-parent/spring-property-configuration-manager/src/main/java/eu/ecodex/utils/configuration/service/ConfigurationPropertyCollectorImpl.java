@@ -157,9 +157,9 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
 //    }
 
     private void processPropertyClazz(List<ConfigurationProperty> configList, ConfigurationPropertyNode parent, Class<?> configurationClass) {
-        Field[] fields = configurationClass.getDeclaredFields(); //TODO: also scan inherited fields...
+        List<Field> fields = collectDeclaredFields(configurationClass, new ArrayList<>()); //.getDeclaredFields(); //TODO: also scan inherited fields...
 
-        Stream.of(fields)
+        fields.stream()
                 .filter(field -> {
                     PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(configurationClass, field.getName());
                     if (propertyDescriptor != null) {
@@ -168,6 +168,20 @@ public class ConfigurationPropertyCollectorImpl implements ConfigurationProperty
                     return false;
                 })
                 .forEach( field -> this.processFieldOfBean(configList, parent, configurationClass, field));
+    }
+
+    /**
+     * walks trough parent classes
+     * and collects all declared fields
+     * @param configurationClass - the class walk through
+     * @return List of declared fields
+     */
+    private List<Field> collectDeclaredFields(Class<?> configurationClass, List<Field> fields) {
+        if (configurationClass != null) {
+            fields.addAll(Arrays.asList(configurationClass.getDeclaredFields()));
+            collectDeclaredFields(configurationClass.getSuperclass(), fields);
+        }
+        return fields;
     }
 
     private void processFieldOfBean(List<ConfigurationProperty> configList, ConfigurationPropertyNode parent, Class parentClass, Field field) {
