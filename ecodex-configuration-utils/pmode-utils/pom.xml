@@ -4,7 +4,7 @@
   <parent>
     <groupId>eu.ecodex.configuration</groupId>
     <artifactId>ecodex-configuration-utils</artifactId>
-    <version>0.0.21-RELEASE</version>
+    <version>0.0.22-RELEASE</version>
   </parent>
   <artifactId>pmode-utils</artifactId>
   <build>

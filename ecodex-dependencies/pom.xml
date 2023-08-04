@@ -4,7 +4,7 @@
   <parent>
     <groupId>eu.ecodex.utils</groupId>
     <artifactId>ecodex-utils-parent</artifactId>
-    <version>0.0.21-RELEASE</version>
+    <version>0.0.22-RELEASE</version>
   </parent>
   <!--    <groupId>eu.ecodex.utils</groupId>-->
   <artifactId>ecodex-dependencies</artifactId>
