@@ -20,20 +20,20 @@
     <connection>scm:git:https://secure.ecodex.eu/gitblit/ecodex-utils.git</connection>
     <url>scm:git:https://secure.ecodex.eu/gitblit/ecodex-utils.git</url>
   </scm>
-  <distributionManagement>
-    <repository>
-      <id>${ecodex-releases-repo.id}</id>
-      <url>${ecodex-releases-repo.url}</url>
-    </repository>
-    <snapshotRepository>
-      <id>${ecodex-snapshots-repo.id}</id>
-      <url>${ecodex-snapshots-repo.url}</url>
-    </snapshotRepository>
-    <site>
-      <id>ecodexutils</id>
-      <url>https://www.ecodex.eu/ecodexutils</url>
-    </site>
-  </distributionManagement>
+<!--  <distributionManagement>-->
+<!--    <repository>-->
+<!--      <id>${ecodex-releases-repo.id}</id>-->
+<!--      <url>${ecodex-releases-repo.url}</url>-->
+<!--    </repository>-->
+<!--    <snapshotRepository>-->
+<!--      <id>${ecodex-snapshots-repo.id}</id>-->
+<!--      <url>${ecodex-snapshots-repo.url}</url>-->
+<!--    </snapshotRepository>-->
+<!--    <site>-->
+<!--      <id>ecodexutils</id>-->
+<!--      <url>https://www.ecodex.eu/ecodexutils</url>-->
+<!--    </site>-->
+<!--  </distributionManagement>-->
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -50,6 +50,11 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.1.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
           <version>3.1.1</version>
         </plugin>
         <plugin>
