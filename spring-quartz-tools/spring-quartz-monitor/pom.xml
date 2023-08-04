@@ -15,7 +15,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>spring-quartz-quartzScheduled</artifactId>
+      <artifactId>spring-quartz-scheduled</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
